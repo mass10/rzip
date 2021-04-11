@@ -23,3 +23,7 @@ target\release\rzip.exe
 cargo install --git https://github.com/mass10/rzip --branch main
 rzip path\to\directory
 ```
+
+# Future Plans
+
+* ファイル名検査を toml で定義できるようにしたい。
