@@ -140,7 +140,7 @@ impl Zipper {
 
 	/// アーカイバーにエントリーを追加します。
 	fn append_entry(&self, archiver: &mut zip::ZipWriter<std::fs::File>, base_name: &str, path: &str) -> Result<(), Box<dyn std::error::Error>> {
-		use helpers::MyHelper;
+		use helpers::DirEntityHelper;
 		use std::io::Write;
 
 		let unknown = std::path::Path::new(path);
