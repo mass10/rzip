@@ -1,76 +1,9 @@
 use crate::util::helpers::PathHelper;
 
+use super::super::util::functions;
 use super::super::util::helpers;
 use super::errors::ApplicationError;
-use chrono::{Datelike, Timelike};
 use std::io::Read;
-
-/// フルパスに変換
-fn canonicalize_path(path: &str) -> Result<String, Box<dyn std::error::Error>> {
-	let path = std::path::Path::new(path);
-	return path.canonical_path_as_string();
-}
-
-/// ディレクトリまたはファイルを削除します。
-fn unlink(path: &str) -> Result<(), Box<dyn std::error::Error>> {
-	if path == "" {
-		return Ok(());
-	}
-	if path == "/" {
-		return Ok(());
-	}
-	if path == "C:" {
-		return Ok(());
-	}
-	if path == "C:\\" {
-		return Ok(());
-	}
-	if path == "C:\\Windows" {
-		return Ok(());
-	}
-
-	let e = std::path::Path::new(path);
-	if !e.exists() {
-		return Ok(());
-	}
-
-	if e.is_dir() {
-		std::fs::remove_dir_all(path)?;
-		return Ok(());
-	}
-	if e.is_file() {
-		std::fs::remove_file(path)?;
-		return Ok(());
-	}
-	return Ok(());
-}
-
-fn convert_datetime1(time: std::time::SystemTime) -> chrono::DateTime<chrono::Local> {
-	return chrono::DateTime::<chrono::Local>::from(time);
-}
-
-fn convert_datetime2(time: chrono::DateTime<chrono::Local>) -> zip::DateTime {
-	let year = time.year() as u16;
-	let month = time.month() as u8;
-	let day = time.day() as u8;
-	let hour = time.hour() as u8;
-	let min = time.minute() as u8;
-	let sec = time.second() as u8;
-
-	return zip::DateTime::from_date_and_time(year, month, day, hour, min, sec).unwrap();
-}
-
-fn convert_datetime0(time: std::time::SystemTime) -> zip::DateTime {
-	let val1 = convert_datetime1(time);
-	let val2 = convert_datetime2(val1);
-	return val2;
-}
-
-fn build_path(base_name: &str, name: &str) -> String {
-	let unknown = std::path::Path::new(base_name);
-	let path_name = unknown.join(name);
-	return path_name.to_str().unwrap().to_string();
-}
 
 /// 正規表現による文字列のマッチング
 fn matches(pattern: &str, text: &str) -> bool {
@@ -154,7 +87,7 @@ impl Zipper {
 			// ディレクトリ名
 			let name = unknown.name_as_str();
 			// ZIP ルートからの相対パス
-			let internal_path = build_path(base_name, name);
+			let internal_path = functions::build_path(base_name, name);
 			// 内部構造にディレクトリエントリーを作成(二段目以降)
 			if base_name != "" {
 				println!("adding file ... {}", &base_name);
@@ -178,14 +111,14 @@ impl Zipper {
 			// ファイル名
 			let name = unknown.name_as_str();
 			// ZIP ルートからの相対パス
-			let relative_path = build_path(base_name, name);
+			let relative_path = functions::build_path(base_name, name);
 			// ファイルのメタ情報
 			let meta = unknown.metadata()?;
 			// ファイルをアーカイブ
 			let options = zip::write::FileOptions::default().compression_method(zip::CompressionMethod::Stored);
 			// 最終更新日時
 			let last_modified = meta.modified()?;
-			let last_modified = convert_datetime0(last_modified);
+			let last_modified = functions::convert_datetime0(last_modified);
 			let options = options.last_modified_time(last_modified);
 
 			// 内部構造にファイルエントリーを作成
@@ -216,18 +149,18 @@ impl Zipper {
 	/// `path` パス
 	pub fn archive(&self, path: &str) -> Result<(), Box<dyn std::error::Error>> {
 		// パスを正規化
-		let path = canonicalize_path(path)?;
+		let path = functions::canonicalize_path(path)?;
 
 		println!("archiving ... {}", &path);
 
 		// ファイル名を生成
-		let archive_path_name = path.to_string() + ".zip";
+		let archive_path_name = format!("{}.zip", &path);
 
 		// 起点となるディレクトリの名前
 		let base_name = "";
 
 		// .zip ファイルがあれば削除
-		unlink(&archive_path_name)?;
+		functions::unlink(&archive_path_name)?;
 
 		// アーカイバーの初期化
 		let w = std::fs::File::create(archive_path_name)?;
