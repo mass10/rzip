@@ -1,53 +1,3 @@
-/// 標準入力から1行読み込みます。終端の改行文字を除く1行全体を返します。
-#[allow(unused)]
-pub fn read_line() -> String {
-	let mut line = String::new();
-	let result = std::io::stdin().read_line(&mut line);
-	if result.is_err() {
-		return String::new();
-	}
-	return line.trim().to_string();
-}
-
-/// エンターキーが押されるまで待機します。
-#[allow(unused)]
-pub fn pause() {
-	let _ = read_line();
-}
-
-/// Yes/No で回答すべきプロンプトを表示します。
-#[allow(unused)]
-pub fn prompt(message: &str) -> std::result::Result<bool, Box<dyn std::error::Error>> {
-	use std::io::Write; // -> Stdout に flush() を実装するトレイト
-
-	println!("{}", message);
-	loop {
-		print!("(y/N): ");
-		std::io::stdout().flush().unwrap();
-		let answer = read_line().to_uppercase();
-		if answer == "Y" || answer == "YES" {
-			return Ok(true);
-		}
-		if answer == "N" || answer == "NO" {
-			return Ok(false);
-		}
-	}
-}
-
-/// タイムスタンプ "%Y-%m-%d %H:%M:%S%.3f" を返します。
-#[allow(unused)]
-pub fn timestamp0() -> String {
-	let date = chrono::Local::now();
-	return format!("{}", date.format("%Y-%m-%d %H:%M:%S%.3f"));
-}
-
-/// タイムスタンプ "%Y%m%d-%H%M%S" を返します。
-#[allow(unused)]
-pub fn timestamp1() -> String {
-	let date = chrono::Local::now();
-	return format!("{}", date.format("%Y%m%d-%H%M%S"));
-}
-
 /// ストップウォッチです。
 pub struct Stopwatch {
 	/// インスタンスが生成された、もしくはオブジェクトがリセットされた日時を指します。
@@ -64,9 +14,30 @@ impl Stopwatch {
 impl std::fmt::Display for Stopwatch {
 	/// 経過時間の文字列表現を返します。
 	fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-		use super::helper::MyDurationHelper;
 		let elapsed = std::time::Instant::now() - self._time;
-		write!(f, "{}", elapsed.to_string2())?;
+		write!(f, "{}", format_duration(&elapsed))?;
 		return Ok(());
 	}
+}
+
+/// 経過時間の文字列表現を返します。
+fn format_duration(d: &std::time::Duration) -> String {
+	let mut millis = d.as_millis();
+	let mut sec = 0;
+	let mut min = 0;
+	let mut hour = 0;
+	while 1000 <= millis {
+		sec += 1;
+		millis -= 1000;
+	}
+	while 60 <= sec {
+		min += 1;
+		sec -= 60;
+	}
+	while 60 <= min {
+		hour += 1;
+		min -= 60;
+	}
+	let s = format!("{:02}:{:02}:{:02}:{:03}", hour, min, sec, millis);
+	return s;
 }

@@ -1,7 +1,6 @@
 mod application;
 mod application_error;
 mod configuration;
-mod helper;
 mod util;
 
 /// アプリケーションのエントリーポイント
