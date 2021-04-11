@@ -2,12 +2,20 @@
 
 # rzip
  
-* zipping application.
-* `node_modules` とか `.git` とかを除外できる
+* 簡易 ZIP アプリケーションです。
+* `node_modules` とか `.git` とかを除外できます。
 
-# GETTING STARTED
+# Getting Started
 
-```bash
+```COMMAND
 cargo install --git https://github.com/mass10/rzip --branch main
-rzip path/to/directory
+rzip path\to\directory
+```
+
+# Getting Started (with Source)
+
+```COMMAND
+git clone git@github.com:mass10/rzip.git
+cargo build --release
+target\release\rzip.exe
 ```
