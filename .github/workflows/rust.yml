@@ -1,4 +1,4 @@
-name: Rust
+name: Build Workflow on GitHub Actions
 
 on:
   push:
