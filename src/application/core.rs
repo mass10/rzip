@@ -1,3 +1,6 @@
+use crate::util::helpers::PathHelper;
+
+use super::super::util::helpers;
 use super::errors::ApplicationError;
 use chrono::{Datelike, Timelike};
 use std::io::Read;
@@ -5,9 +8,7 @@ use std::io::Read;
 /// フルパスに変換
 fn canonicalize_path(path: &str) -> Result<String, Box<dyn std::error::Error>> {
 	let path = std::path::Path::new(path);
-	let path = path.canonicalize()?;
-	let path = path.to_str().unwrap().to_string();
-	return Ok(path);
+	return path.canonical_path_as_string();
 }
 
 /// ディレクトリまたはファイルを削除します。
@@ -55,6 +56,7 @@ fn convert_datetime2(time: chrono::DateTime<chrono::Local>) -> zip::DateTime {
 	let hour = time.hour() as u8;
 	let min = time.minute() as u8;
 	let sec = time.second() as u8;
+
 	return zip::DateTime::from_date_and_time(year, month, day, hour, min, sec).unwrap();
 }
 
@@ -138,59 +140,58 @@ impl Zipper {
 
 	/// アーカイバーにエントリーを追加します。
 	fn append_entry(&self, archiver: &mut zip::ZipWriter<std::fs::File>, base_name: &str, path: &str) -> Result<(), Box<dyn std::error::Error>> {
+		use helpers::MyHelper;
 		use std::io::Write;
 
 		let unknown = std::path::Path::new(path);
 		if unknown.is_dir() {
+			// ディレクトリの名前を検査しています。
+			// TODO: 廃止予定
 			if !is_valid_directory(unknown) {
 				return Ok(());
 			}
 
-			let name = unknown.file_name().unwrap().to_str().unwrap();
-
-			// 内部ディレクトリエントリーを作成
+			// ディレクトリ名
+			let name = unknown.name_as_str();
+			// ZIP ルートからの相対パス
+			let internal_path = build_path(base_name, name);
+			// 内部構造にディレクトリエントリーを作成(二段目以降)
 			if base_name != "" {
 				println!("adding file ... {}", &base_name);
 				let options = zip::write::FileOptions::default().compression_method(zip::CompressionMethod::Stored);
-				archiver.add_directory(build_path(base_name, name), options)?;
+				archiver.add_directory(&internal_path, options)?;
 			}
-
+			// サブディレクトリを走査
 			let it = std::fs::read_dir(path)?;
 			for e in it {
 				let entry = e?;
-
-				// base_name からの内部相対パスを生成
-				let sub_dir_name = build_path(base_name, &name);
-
-				let path_name = entry.path();
-				let path_name = path_name.to_str().unwrap();
-
-				self.append_entry(archiver, &sub_dir_name, path_name)?;
+				let fullpath = entry.path_as_string();
+				self.append_entry(archiver, &internal_path, &fullpath)?;
 			}
 		} else if unknown.is_file() {
+			// ディレクトリの名前を検査しています。
+			// TODO: 廃止予定
 			if !is_valid_file(unknown) {
 				return Ok(());
 			}
-			let full_path = unknown.to_str().unwrap();
-			let name = unknown.file_name().unwrap().to_str().unwrap();
 
+			// ファイル名
+			let name = unknown.name_as_str();
+			// ZIP ルートからの相対パス
 			let relative_path = build_path(base_name, name);
-
-			println!("adding file ... {}", &relative_path);
-
+			// ファイルのメタ情報
 			let meta = unknown.metadata()?;
-
 			// ファイルをアーカイブ
 			let options = zip::write::FileOptions::default().compression_method(zip::CompressionMethod::Stored);
-
 			// 最終更新日時
 			let last_modified = meta.modified()?;
 			let last_modified = convert_datetime0(last_modified);
 			let options = options.last_modified_time(last_modified);
 
+			// 内部構造にファイルエントリーを作成
+			println!("adding file ... {}", &relative_path);
 			archiver.start_file(&relative_path, options)?;
-
-			let mut stream = std::fs::File::open(full_path)?;
+			let mut stream = std::fs::File::open(path)?;
 			loop {
 				let mut buffer = [0; 1000];
 				let bytes_read = stream.read(&mut buffer)?;
