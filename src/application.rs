@@ -78,8 +78,8 @@ fn matches(pattern: &str, text: &str) -> bool {
 }
 
 /// ファイル名の検証
-pub fn is_valid_file(dir: &std::path::Path) -> bool {
-	let name = dir.file_name().unwrap().to_str().unwrap();
+pub fn is_valid_file(path: &std::path::Path) -> bool {
+	let name = path.file_name().unwrap().to_str().unwrap();
 	// で終わる
 	if matches("-20[0-9][0-9][0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9].zip$", name) {
 		return false;
