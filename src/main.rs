@@ -1,20 +1,9 @@
 mod application;
 mod application_error;
-mod configuration;
-mod util;
+mod stopwatch;
 
 /// アプリケーションのエントリーポイント
 fn main() {
-	// コンフィギュレーション
-	if false {
-		let result = configuration::ConfigurationSettings::configure();
-		if result.is_err() {
-			println!("[ERROR] Configuration error. reason: {}", result.err().unwrap());
-			return;
-		}
-		let _conf = result.unwrap();
-	}
-
 	// コマンドライン引数(コマンド自身を除く)
 	let args: std::vec::Vec<String> = std::env::args().skip(1).collect();
 	if args.len() == 0 {
@@ -24,7 +13,7 @@ fn main() {
 	}
 
 	// 処理時間計測用ストップウォッチ
-	let stopwatch = util::Stopwatch::new();
+	let stopwatch = stopwatch::Stopwatch::new();
 
 	// 第一引数
 	let path_to_target = &args[0];
