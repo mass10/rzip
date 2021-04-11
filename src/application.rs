@@ -1,3 +1,4 @@
+use super::application_error::ApplicationError;
 use chrono::{Datelike, Timelike};
 use std::io::Read;
 
@@ -134,9 +135,7 @@ impl Application {
 		use std::io::Write;
 
 		let unknown = std::path::Path::new(path);
-		if !unknown.exists() {
-			return Ok(());
-		} else if unknown.is_dir() {
+		if unknown.is_dir() {
 			if !is_valid_directory(unknown) {
 				return Ok(());
 			}
@@ -145,6 +144,7 @@ impl Application {
 
 			// 内部ディレクトリエントリーを作成
 			if base_name != "" {
+				println!("adding file ... {}", &base_name);
 				let options = zip::write::FileOptions::default().compression_method(zip::CompressionMethod::Stored);
 				archiver.add_directory(build_path(base_name, name), options)?;
 			}
@@ -194,8 +194,10 @@ impl Application {
 				let write_buffer = &buffer[..bytes_read];
 				archiver.write(&write_buffer)?;
 			}
-			// archiver.write(b"Hello, World!")?;
-			// archiver.finish()?;
+		} else {
+			let message = format!("Unknown filesystem [{}].", path);
+			let err = ApplicationError::new(&message);
+			return Err(Box::new(err));
 		}
 
 		return Ok(());
