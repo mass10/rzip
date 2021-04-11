@@ -1,4 +1,4 @@
-use super::application_error::ApplicationError;
+use super::errors::ApplicationError;
 use chrono::{Datelike, Timelike};
 use std::io::Read;
 
@@ -118,15 +118,15 @@ pub fn is_valid_directory(dir: &std::path::Path) -> bool {
 }
 
 /// アプリケーション本体の定義
-pub struct Application;
+pub struct Zipper;
 
-impl Application {
+impl Zipper {
 	/// 新しいインスタンスを返します。
 	///
 	/// # Returns
 	/// 新しいアプリケーションのインスタンス
-	pub fn new() -> Application {
-		let instance = Application {};
+	pub fn new() -> Zipper {
+		let instance = Zipper {};
 		return instance;
 	}
 

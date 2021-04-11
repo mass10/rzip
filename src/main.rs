@@ -1,6 +1,5 @@
 mod application;
-mod application_error;
-mod stopwatch;
+mod util;
 
 /// アプリケーションのエントリーポイント
 fn main() {
@@ -13,14 +12,14 @@ fn main() {
 	}
 
 	// 処理時間計測用ストップウォッチ
-	let stopwatch = stopwatch::Stopwatch::new();
+	let stopwatch = util::stopwatch::Stopwatch::new();
 
 	// 第一引数
 	let path_to_target = &args[0];
 
 	// 書庫化 & ZIP 圧縮
-	let app = application::Application::new();
-	let result = app.archive(&path_to_target);
+	let zipper = application::core::Zipper::new();
+	let result = zipper.archive(&path_to_target);
 	if result.is_err() {
 		println!("[ERROR] Runtime error. reason: {:?}", result.err().unwrap());
 		std::thread::sleep(std::time::Duration::from_secs(2));
