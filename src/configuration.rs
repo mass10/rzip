@@ -11,7 +11,7 @@ pub struct ConfigurationSettings {
 
 impl ConfigurationSettings {
 	/// 新しいインスタンスを返します。
-	pub fn configure() -> std::result::Result<ConfigurationSettings, std::boxed::Box<dyn std::error::Error>> {
+	pub fn configure() -> Result<ConfigurationSettings, std::boxed::Box<dyn std::error::Error>> {
 		// コンフィギュレーション構造体
 		let mut conf = ConfigurationSettings { port: 0, server: "".to_string() };
 
@@ -58,7 +58,7 @@ impl ConfigurationSettings {
 /// [std::fmt::Display] としての振る舞いを実装します。
 impl std::fmt::Display for ConfigurationSettings {
 	/// 規定の操作をインプリメントします。
-	fn fmt(&self, f: &mut std::fmt::Formatter) -> std::result::Result<(), std::fmt::Error> {
+	fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
 		return write!(f, "{{ server: \"{}\", port: {} }}", self.server, self.port);
 	}
 }

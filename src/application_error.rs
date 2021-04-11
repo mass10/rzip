@@ -15,7 +15,7 @@ impl ApplicationError {
 /// [std::fmt::Display] としての振る舞いを実装します。
 impl std::fmt::Display for ApplicationError {
 	/// 規定の操作をインプリメントします。
-	fn fmt(&self, f: &mut std::fmt::Formatter) -> std::result::Result<(), std::fmt::Error> {
+	fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
 		return write!(f, "{}", self.description);
 	}
 }

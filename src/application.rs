@@ -3,7 +3,7 @@ use chrono::{Datelike, Timelike};
 use std::io::Read;
 
 /// フルパスに変換
-fn canonicalize_path(path: &str) -> std::result::Result<String, Box<dyn std::error::Error>> {
+fn canonicalize_path(path: &str) -> Result<String, Box<dyn std::error::Error>> {
 	let path = std::path::Path::new(path);
 	let path = path.canonicalize()?;
 	let path = path.to_str().unwrap().to_string();
@@ -11,7 +11,7 @@ fn canonicalize_path(path: &str) -> std::result::Result<String, Box<dyn std::err
 }
 
 /// ディレクトリまたはファイルを削除します。
-fn unlink(path: &str) -> std::result::Result<(), Box<dyn std::error::Error>> {
+fn unlink(path: &str) -> Result<(), Box<dyn std::error::Error>> {
 	if path == "" {
 		return Ok(());
 	}
