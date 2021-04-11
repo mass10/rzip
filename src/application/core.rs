@@ -49,7 +49,13 @@ fn convert_datetime1(time: std::time::SystemTime) -> chrono::DateTime<chrono::Lo
 }
 
 fn convert_datetime2(time: chrono::DateTime<chrono::Local>) -> zip::DateTime {
-	return zip::DateTime::from_date_and_time(time.year() as u16, time.month() as u8, time.day() as u8, time.hour() as u8, time.minute() as u8, time.second() as u8).unwrap();
+	let year = time.year() as u16;
+	let month = time.month() as u8;
+	let day = time.day() as u8;
+	let hour = time.hour() as u8;
+	let min = time.minute() as u8;
+	let sec = time.second() as u8;
+	return zip::DateTime::from_date_and_time(year, month, day, hour, min, sec).unwrap();
 }
 
 fn convert_datetime0(time: std::time::SystemTime) -> zip::DateTime {
