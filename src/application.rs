@@ -2,12 +2,6 @@ use super::application_error::ApplicationError;
 use chrono::{Datelike, Timelike};
 use std::io::Read;
 
-#[allow(unused)]
-fn get_file_name(path: &str) -> String {
-	let unknown = std::path::Path::new(path);
-	return unknown.file_name().unwrap().to_str().unwrap().to_string();
-}
-
 /// フルパスに変換
 fn canonicalize_path(path: &str) -> std::result::Result<String, Box<dyn std::error::Error>> {
 	let path = std::path::Path::new(path);
@@ -123,14 +117,20 @@ pub fn is_valid_directory(dir: &std::path::Path) -> bool {
 	return true;
 }
 
+/// アプリケーション本体の定義
 pub struct Application;
 
 impl Application {
+	/// 新しいインスタンスを返します。
+	///
+	/// # Returns
+	/// 新しいアプリケーションのインスタンス
 	pub fn new() -> Application {
 		let instance = Application {};
 		return instance;
 	}
 
+	/// アーカイバーにエントリーを追加します。
 	fn append_entry(&self, archiver: &mut zip::ZipWriter<std::fs::File>, base_name: &str, path: &str) -> Result<(), Box<dyn std::error::Error>> {
 		use std::io::Write;
 
