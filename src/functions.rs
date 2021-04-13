@@ -71,3 +71,16 @@ pub fn build_path(base_name: &str, name: &str) -> String {
 	let path_name = unknown.join(name);
 	return path_name.to_str().unwrap().to_string();
 }
+
+/// タイムスタンプ "%Y-%m-%d %H:%M:%S%.3f" を返します。
+#[allow(unused)]
+pub fn timestamp0() -> String {
+	let date = chrono::Local::now();
+	return format!("{}", date.format("%Y-%m-%d %H:%M:%S%.3f"));
+}
+
+/// タイムスタンプ "%Y%m%d-%H%M%S" を返します。
+pub fn timestamp1() -> String {
+	let date = chrono::Local::now();
+	return format!("{}", date.format("%Y%m%d-%H%M%S"));
+}

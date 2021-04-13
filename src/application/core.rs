@@ -151,9 +151,10 @@ impl Zipper {
 
 		println!("archiving ... {}", &path);
 
+		// タイムスタンプ(%Y%m%d-%H%M%S)
+		let current_timestamp = functions::timestamp1();
 		// ファイル名を生成
-		let archive_path_name = format!("{}.zip", &path);
-
+		let archive_path_name = format!("{}-{}.zip", &path, &current_timestamp);
 		// 起点となるディレクトリの名前
 		let base_name = "";
 
