@@ -1,7 +1,4 @@
-use crate::util::helpers::PathHelper;
-
-use super::super::util::functions;
-use super::super::util::helpers;
+use super::super::functions;
 use super::errors::ApplicationError;
 use std::io::Read;
 
@@ -73,7 +70,8 @@ impl Zipper {
 
 	/// アーカイバーにエントリーを追加します。
 	fn append_entry(&self, archiver: &mut zip::ZipWriter<std::fs::File>, base_name: &str, path: &str) -> Result<(), Box<dyn std::error::Error>> {
-		use helpers::DirEntityHelper;
+		use crate::helpers::DirEntityHelper;
+		use crate::helpers::PathHelper;
 		use std::io::Write;
 
 		let unknown = std::path::Path::new(path);
