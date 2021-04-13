@@ -30,8 +30,7 @@ pub fn unlink(path: &str) -> Result<(), Box<dyn std::error::Error>> {
 	if e.is_dir() {
 		std::fs::remove_dir_all(path)?;
 		return Ok(());
-	}
-	if e.is_file() {
+	} else if e.is_file() {
 		std::fs::remove_file(path)?;
 		return Ok(());
 	}
