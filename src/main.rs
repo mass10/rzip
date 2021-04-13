@@ -1,4 +1,6 @@
 mod application;
+mod functions;
+mod helpers;
 mod util;
 
 /// アプリケーションのエントリーポイント
@@ -12,7 +14,7 @@ fn main() {
 	}
 
 	// 処理時間計測用ストップウォッチ
-	let stopwatch = util::stopwatch::Stopwatch::new();
+	let stopwatch = util::time::Stopwatch::new();
 
 	// 第一引数
 	let path_to_target = &args[0];

@@ -14,7 +14,7 @@ impl Stopwatch {
 impl std::fmt::Display for Stopwatch {
 	/// 経過時間の文字列表現を返します。
 	fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-		use super::helpers::DurationFormatter;
+		use crate::helpers::DurationFormatter;
 
 		let elapsed = std::time::Instant::now() - self.time;
 		write!(f, "{}", elapsed.to_string())?;
