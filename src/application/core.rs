@@ -155,8 +155,6 @@ impl Zipper {
 		let current_timestamp = functions::timestamp1();
 		// ファイル名を生成
 		let archive_path_name = format!("{}-{}.zip", &path, &current_timestamp);
-		// 起点となるディレクトリの名前
-		let base_name = "";
 
 		// .zip ファイルがあれば削除
 		functions::unlink(&archive_path_name)?;
@@ -166,7 +164,7 @@ impl Zipper {
 		let mut archiver = zip::ZipWriter::new(w);
 
 		// ここから走査
-		self.append_entry(&mut archiver, &base_name, &path)?;
+		self.append_entry(&mut archiver, "", &path)?;
 
 		// アーカイバーを閉じます。
 		archiver.finish()?;
