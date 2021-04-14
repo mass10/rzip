@@ -114,7 +114,7 @@ impl Zipper {
 			// ファイル名
 			let name = unknown.name_as_str();
 			// ZIP ルートからの相対パス
-			let relative_path = functions::build_path(base_name, name);
+			let internal_path = functions::build_path(base_name, name);
 			// ファイルのメタ情報
 			let meta = unknown.metadata()?;
 			// ファイルをアーカイブ
@@ -125,8 +125,8 @@ impl Zipper {
 			let options = options.last_modified_time(last_modified);
 
 			// 内部構造にファイルエントリーを作成
-			println!("adding file ... {}", &relative_path);
-			archiver.start_file(&relative_path, options)?;
+			println!("adding file ... {}", &internal_path);
+			archiver.start_file(&internal_path, options)?;
 			let mut stream = std::fs::File::open(path)?;
 			loop {
 				let mut buffer = [0; 1000];

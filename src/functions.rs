@@ -66,10 +66,16 @@ pub fn canonicalize_path(path: &str) -> Result<String, Box<dyn std::error::Error
 	return path.canonical_path_as_string();
 }
 
-pub fn build_path(base_name: &str, name: &str) -> String {
-	let unknown = std::path::Path::new(base_name);
-	let path_name = unknown.join(name);
-	return path_name.to_str().unwrap().to_string();
+/// 内部パスを生成します。
+///
+/// # Arguments
+/// * `parent` エントリーを追加する場所までのパス
+/// * `name` 新しいエントリーの名前
+///
+/// # Returns
+/// パス文字列
+pub fn build_path(parent: &str, name: &str) -> String {
+	return format!("{}/{}", parent, name);
 }
 
 /// タイムスタンプ "%Y-%m-%d %H:%M:%S%.3f" を返します。
