@@ -69,6 +69,11 @@ impl Zipper {
 	}
 
 	/// アーカイバーにエントリーを追加します。
+	///
+	/// # Arguments
+	/// * `archiver` アーカイバー
+	/// * `base_name` ディレクトリ名
+	/// * `path` ファイルへのパス。内部名はファイルの名前になります。
 	fn append_entry(&self, archiver: &mut zip::ZipWriter<std::fs::File>, base_name: &str, path: &str) -> Result<(), Box<dyn std::error::Error>> {
 		use crate::helpers::DirEntityHelper;
 		use crate::helpers::PathHelper;
