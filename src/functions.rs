@@ -75,6 +75,9 @@ pub fn canonicalize_path(path: &str) -> Result<String, Box<dyn std::error::Error
 /// # Returns
 /// パス文字列
 pub fn build_path(parent: &str, name: &str) -> String {
+	if parent == "" {
+		return name.to_string();
+	}
 	return format!("{}/{}", parent, name);
 }
 
