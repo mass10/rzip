@@ -1,3 +1,6 @@
+//!
+//! アプリケーションのメイン
+//!
 use super::super::functions;
 use super::errors::ApplicationError;
 use std::io::Read;
@@ -111,14 +114,15 @@ impl Zipper {
 				return Ok(());
 			}
 
+			let options = zip::write::FileOptions::default();
 			// ファイル名
 			let name = unknown.name_as_str();
 			// ZIP ルートからの相対パス
 			let internal_path = functions::build_path(base_name, name);
 			// ファイルのメタ情報
 			let meta = unknown.metadata()?;
-			// ファイルをアーカイブ
-			let options = zip::write::FileOptions::default().compression_method(zip::CompressionMethod::Stored);
+			// 圧縮方法
+			let options = options.compression_method(zip::CompressionMethod::Stored);
 			// 最終更新日時
 			let last_modified = meta.modified()?;
 			let last_modified = functions::convert_datetime0(last_modified);
