@@ -96,7 +96,7 @@ impl Zipper {
 			let internal_path = functions::build_path(base_name, name);
 			// 内部構造にディレクトリエントリーを作成(二段目以降)
 			if base_name != "" {
-				println!("adding ... {}", &base_name);
+				println!("[INFO] adding ... {}", &base_name);
 				let options = zip::write::FileOptions::default().compression_method(zip::CompressionMethod::Stored);
 				archiver.add_directory(&internal_path, options)?;
 			}
@@ -129,7 +129,7 @@ impl Zipper {
 			let options = options.last_modified_time(last_modified);
 
 			// 内部構造にファイルエントリーを作成
-			println!("adding ... {}", &internal_path);
+			println!("[INFO] adding ... {}", &internal_path);
 			archiver.start_file(&internal_path, options)?;
 			let mut stream = std::fs::File::open(path)?;
 			loop {
@@ -157,13 +157,12 @@ impl Zipper {
 	pub fn archive(&self, path: &str) -> Result<(), Box<dyn std::error::Error>> {
 		// パスを正規化
 		let path = functions::canonicalize_path(path)?;
-
-		println!("archiving ... {}", &path);
-
 		// タイムスタンプ(%Y%m%d-%H%M%S)
 		let current_timestamp = functions::timestamp1();
 		// ファイル名を生成
 		let archive_path_name = format!("{}-{}.zip", &path, &current_timestamp);
+
+		println!("[INFO] archiving ... {} >> {}", &path, &archive_path_name);
 
 		// .zip ファイルがあれば削除
 		functions::unlink(&archive_path_name)?;
