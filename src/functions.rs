@@ -2,8 +2,6 @@
 //! 様々な汎用操作
 //!
 
-use chrono::{Datelike, Timelike};
-
 /// ディレクトリまたはファイルを削除します。
 pub fn unlink(path: &str) -> Result<(), Box<dyn std::error::Error>> {
 	if path == "" {
@@ -42,6 +40,8 @@ pub fn convert_datetime1(time: std::time::SystemTime) -> chrono::DateTime<chrono
 }
 
 pub fn convert_datetime2(time: chrono::DateTime<chrono::Local>) -> zip::DateTime {
+	use chrono::{Datelike, Timelike};
+
 	let year = time.year() as u16;
 	let month = time.month() as u8;
 	let day = time.day() as u8;

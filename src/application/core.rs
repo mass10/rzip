@@ -1,8 +1,8 @@
 //!
 //! アプリケーションのメイン
 //!
-use super::super::functions;
 use super::errors::ApplicationError;
+use crate::functions;
 use std::io::Read;
 
 /// 正規表現による文字列のマッチング
