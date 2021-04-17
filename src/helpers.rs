@@ -1,3 +1,7 @@
+//!
+//! 汎用的な各種トレイトの実装
+//!
+
 pub trait DirEntityHelper {
 	/// パスを `String` で返します。
 	///
