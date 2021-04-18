@@ -10,7 +10,7 @@
 * ソースからビルドし、独自のファイル名検査を追加・修正してください。
 
 ```COMMAND
-git clone git@github.com:mass10/rzip.git
+git clone https://github.com/mass10/rzip
 cargo build --release
 target\release\rzip.exe
 ```
