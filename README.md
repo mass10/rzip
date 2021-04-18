@@ -2,12 +2,12 @@
 
 # rzip
  
-* 簡易 ZIP アプリケーションです。
-* `node_modules` とか `.git` とかを除外できます。
+* Simple ZIP-per.
+* Enabled to excludes something like `node_modules`, `.git`.
 
 # Getting Started (with Source)
 
-* ソースからビルドし、独自のファイル名検査を追加・修正してください。
+* Modify to implement your own filter.
 
 ```COMMAND
 git clone https://github.com/mass10/rzip
@@ -17,7 +17,7 @@ target\release\rzip.exe
 
 # Getting Started (with Binary)
 
-* 作者固有のファイル名検査が入っているため、おすすめしません。
+* Not recomended unless you understand what you're doing.
 
 ```COMMAND
 cargo install --git https://github.com/mass10/rzip --branch main
@@ -26,4 +26,5 @@ rzip path\to\directory
 
 # Future Plans
 
-* ファイル名検査を toml で定義できるようにしたい。
+* Enable to excluding filters on your own settings.toml.
+
