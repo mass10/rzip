@@ -1,3 +1,7 @@
+//!
+//! アプリケーションのエントリーポイントです。
+//!
+
 mod application;
 mod functions;
 mod helpers;

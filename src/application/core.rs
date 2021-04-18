@@ -1,6 +1,7 @@
 //!
 //! アプリケーションのメイン
 //!
+
 use super::errors::ApplicationError;
 use crate::functions;
 use std::io::Read;
