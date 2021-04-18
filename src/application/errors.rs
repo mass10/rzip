@@ -1,6 +1,7 @@
 //!
 //! アプリケーション定義のエラー
 //!
+
 /// アプリケーション定義エラー
 #[derive(Debug, Clone)]
 pub struct ApplicationError {

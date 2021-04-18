@@ -2,6 +2,7 @@
 //! 汎用的な各種トレイトの実装
 //!
 
+/// [std::fs::DirEntry] のヘルパー
 pub trait DirEntityHelper {
 	/// パスを `String` で返します。
 	///
@@ -21,6 +22,7 @@ impl DirEntityHelper for std::fs::DirEntry {
 	}
 }
 
+/// [std::path::Path] のヘルパー
 pub trait PathHelper {
 	/// ファイル名を返します。
 	///
