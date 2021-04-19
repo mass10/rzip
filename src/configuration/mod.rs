@@ -5,7 +5,8 @@ use crate::functions;
 #[derive(serde_derive::Deserialize, Debug, std::clone::Clone)]
 pub struct Settings {
 	/// 除外するディレクトリ名
-	pub exclude_dirs: Option<Vec<String>>,
+	pub exclude_dirs: Option<std::collections::HashSet<String>>,
+
 	/// 除外するファイル名
 	pub exclude_files: Option<std::collections::HashSet<String>>,
 }
@@ -17,7 +18,7 @@ impl Settings {
 	/// `Settings` の新しいインスタンス
 	pub fn new() -> Result<Settings, Box<dyn std::error::Error>> {
 		let mut instance = Settings {
-			exclude_dirs: Some(vec![]),
+			exclude_dirs: Some(std::collections::HashSet::new()),
 			exclude_files: Some(std::collections::HashSet::new()),
 		};
 		instance.configure("settings.toml")?;
@@ -39,7 +40,7 @@ impl Settings {
 		// toml ファイルをパース
 		*self = toml::from_str(&content)?;
 		if self.exclude_dirs.is_none() {
-			self.exclude_dirs = Some(vec![]);
+			self.exclude_dirs = Some(std::collections::HashSet::new());
 		}
 		if self.exclude_files.is_none() {
 			self.exclude_files = Some(std::collections::HashSet::new());
@@ -58,8 +59,28 @@ impl Settings {
 		if self.exclude_dirs.is_none() {
 			return true;
 		}
-		let dirs = self.exclude_dirs.as_ref().unwrap();
-		for e in dirs {
+		let names = self.exclude_dirs.as_ref().unwrap();
+		for e in names {
+			if name == e {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/// 指定された名前が処理対象のファイルか調べます。
+	///
+	/// # Arguments
+	/// * `name` ファイルの名前
+	///
+	/// # Returns
+	/// 処理対象(=つまり除外ファイル名に指定されていない)なら `true` を返します。
+	pub fn is_valid_filename(&self, name: &str) -> bool {
+		if self.exclude_files.is_none() {
+			return true;
+		}
+		let names = self.exclude_files.as_ref().unwrap();
+		for e in names {
 			if name == e {
 				return false;
 			}
