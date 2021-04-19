@@ -3,6 +3,7 @@
 //!
 
 mod application;
+mod configuration;
 mod functions;
 mod helpers;
 mod util;
@@ -23,9 +24,17 @@ fn main() {
 	// 第一引数
 	let path_to_target = &args[0];
 
+	// コンフィギュレーション
+	let result = configuration::Settings::new();
+	if result.is_err() {
+		println!("[ERROR] Configuration error. reason: {}", result.err().unwrap());
+		return;
+	}
+	let settings = result.unwrap();
+
 	// 書庫化 & ZIP 圧縮
 	let zipper = application::core::Zipper::new();
-	let result = zipper.archive(&path_to_target);
+	let result = zipper.archive(&settings, &path_to_target);
 	if result.is_err() {
 		println!("[ERROR] Runtime error. reason: {:?}", result.err().unwrap());
 		std::thread::sleep(std::time::Duration::from_secs(2));
