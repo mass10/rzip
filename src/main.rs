@@ -10,6 +10,14 @@ mod util;
 
 /// アプリケーションのエントリーポイント
 fn main() {
+	// コンフィギュレーション
+	let result = configuration::Settings::new();
+	if result.is_err() {
+		println!("[ERROR] Configuration error. reason: {}", result.err().unwrap());
+		return;
+	}
+	let settings = result.unwrap();
+
 	// コマンドライン引数(コマンド自身を除く)
 	let args: std::vec::Vec<String> = std::env::args().skip(1).collect();
 	if args.len() == 0 {
@@ -23,14 +31,6 @@ fn main() {
 
 	// 第一引数
 	let path_to_target = &args[0];
-
-	// コンフィギュレーション
-	let result = configuration::Settings::new();
-	if result.is_err() {
-		println!("[ERROR] Configuration error. reason: {}", result.err().unwrap());
-		return;
-	}
-	let settings = result.unwrap();
 
 	// 書庫化 & ZIP 圧縮
 	let zipper = application::core::Zipper::new();
