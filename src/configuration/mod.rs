@@ -2,6 +2,30 @@ extern crate serde_derive;
 
 use crate::functions;
 
+fn head(wildcard: &str) -> String {
+	if wildcard.starts_with("*") {
+		return wildcard.to_string();
+	} else {
+		return format!("^{}", wildcard);
+	};
+}
+
+fn tail(wildcard: &str) -> String {
+	if wildcard.ends_with("*") {
+		return wildcard.to_string();
+	} else {
+		return format!("{}$", wildcard);
+	};
+}
+
+fn make_name_filter(wildcard: &str) -> String {
+	let wildcard = head(wildcard);
+	let wildcard = tail(&wildcard);
+	let wildcard = wildcard.replace(".", "\\.");
+	let wildcard = wildcard.replace("*", ".+");
+	return wildcard;
+}
+
 #[derive(serde_derive::Deserialize, Debug, std::clone::Clone)]
 pub struct Settings {
 	/// 除外するディレクトリ名
@@ -35,8 +59,10 @@ impl Settings {
 			println!("[TRACE] Configuration file not found. (settings.toml)");
 			return Ok(());
 		}
+
 		// テキストファイル全体を読み込み
 		let content = functions::read_text_file_all(&path)?;
+
 		// toml ファイルをパース
 		*self = toml::from_str(&content)?;
 		if self.exclude_dirs.is_none() {
@@ -45,6 +71,7 @@ impl Settings {
 		if self.exclude_files.is_none() {
 			self.exclude_files = Some(std::collections::HashSet::new());
 		}
+
 		return Ok(());
 	}
 
@@ -75,16 +102,24 @@ impl Settings {
 	///
 	/// # Returns
 	/// 処理対象(=つまり除外ファイル名に指定されていない)なら `true` を返します。
-	pub fn is_valid_filename(&self, name: &str) -> bool {
+	pub fn is_valid_filename(&self, name: &str) -> Result<bool, Box<dyn std::error::Error>> {
 		if self.exclude_files.is_none() {
-			return true;
+			return Ok(true);
 		}
+
 		let names = self.exclude_files.as_ref().unwrap();
 		for e in names {
+			let wildcard = make_name_filter(&e);
+			let regex = regex::Regex::new(&wildcard)?;
+			let matched = regex.is_match(name);
+			if matched {
+				return Ok(false);
+			}
 			if name == e {
-				return false;
+				return Ok(false);
 			}
 		}
-		return true;
+
+		return Ok(true);
 	}
 }
