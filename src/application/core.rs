@@ -94,6 +94,7 @@ impl Zipper {
 				return Ok(());
 			}
 			if !settings.is_valid_dir(name) {
+				println!("[TRACE] IGNORE {}", name);
 				return Ok(());
 			}
 
@@ -113,15 +114,19 @@ impl Zipper {
 				self.append_entry(archiver, &internal_path, &fullpath, &settings)?;
 			}
 		} else if unknown.is_file() {
+			// ファイル名
+			let name = unknown.name_as_str();
 			// ディレクトリの名前を検査しています。
 			// TODO: 廃止予定
 			if !is_valid_file(unknown) {
 				return Ok(());
 			}
+			if !settings.is_valid_filename(name)? {
+				println!("[TRACE] IGNORE {}", name);
+				return Ok(());
+			}
 
 			let options = zip::write::FileOptions::default();
-			// ファイル名
-			let name = unknown.name_as_str();
 			// ZIP ルートからの相対パス
 			let internal_path = functions::build_path(base_name, name);
 			// ファイルのメタ情報
