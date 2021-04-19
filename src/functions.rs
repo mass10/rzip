@@ -3,23 +3,13 @@
 //!
 
 /// ディレクトリまたはファイルを削除します。
+///
+/// # Arguments
+/// * `path` ファイル、またはディレクトリのパス
 pub fn unlink(path: &str) -> Result<(), Box<dyn std::error::Error>> {
 	if path == "" {
 		return Ok(());
 	}
-	if path == "/" {
-		return Ok(());
-	}
-	if path == "C:" {
-		return Ok(());
-	}
-	if path == "C:\\" {
-		return Ok(());
-	}
-	if path == "C:\\Windows" {
-		return Ok(());
-	}
-
 	let e = std::path::Path::new(path);
 	if !e.exists() {
 		return Ok(());
