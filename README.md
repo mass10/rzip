@@ -24,11 +24,6 @@ cargo install --git https://github.com/mass10/rzip --branch main
 rzip path\to\directory
 ```
 
-# Future Plans
-
-* Enable to excluding filters on your own settings.toml.
-
-
 # settings.toml
 
 ```toml
@@ -42,3 +37,7 @@ exclude_files = [
 	"*.obj"
 ]
 ```
+
+# Future Plans
+
+* Enable to excluding filters on your own settings.toml. (WIP)
