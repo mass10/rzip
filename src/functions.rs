@@ -83,3 +83,16 @@ pub fn timestamp1() -> String {
 	let date = chrono::Local::now();
 	return format!("{}", date.format("%Y%m%d-%H%M%S"));
 }
+
+/// Retrieve the whole content of file
+///
+/// ### Returns
+/// Entire content of file as `String`
+pub fn read_text_file_all(path: &str) -> std::result::Result<String, Box<dyn std::error::Error>> {
+	use std::io::Read;
+
+	let mut file = std::fs::File::open(path)?;
+	let mut s = String::new();
+	file.read_to_string(&mut s)?;
+	return Ok(s);
+}
