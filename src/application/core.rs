@@ -3,6 +3,7 @@
 //!
 
 use super::errors::ApplicationError;
+use crate::configuration;
 use crate::functions;
 use std::io::Read;
 
@@ -42,8 +43,8 @@ pub fn is_valid_file(path: &std::path::Path) -> bool {
 }
 
 /// ディレクトリの妥当性を検証します。
-pub fn is_valid_directory(dir: &std::path::Path) -> bool {
-	match dir.file_name().unwrap().to_str().unwrap() {
+pub fn is_valid_directory(name: &str) -> bool {
+	match name {
 		"node_modules" => return false,
 		".git" => return false,
 		"dist" => return false,
@@ -78,21 +79,24 @@ impl Zipper {
 	/// * `archiver` [zip::ZipWriter] アーカイバー
 	/// * `base_name` ディレクトリ名
 	/// * `path` ファイルへのパス。内部名はファイルの名前になります。
-	fn append_entry(&self, archiver: &mut zip::ZipWriter<std::fs::File>, base_name: &str, path: &str) -> Result<(), Box<dyn std::error::Error>> {
+	fn append_entry(&self, archiver: &mut zip::ZipWriter<std::fs::File>, base_name: &str, path: &str, settings: &configuration::Settings) -> Result<(), Box<dyn std::error::Error>> {
 		use crate::helpers::DirEntityHelper;
 		use crate::helpers::PathHelper;
 		use std::io::Write;
 
 		let unknown = std::path::Path::new(path);
 		if unknown.is_dir() {
+			// ディレクトリ名
+			let name = unknown.name_as_str();
 			// ディレクトリの名前を検査しています。
 			// TODO: 廃止予定
-			if !is_valid_directory(unknown) {
+			if !is_valid_directory(name) {
+				return Ok(());
+			}
+			if !settings.is_valid_dir(name) {
 				return Ok(());
 			}
 
-			// ディレクトリ名
-			let name = unknown.name_as_str();
 			// ZIP ルートからの相対パス
 			let internal_path = functions::build_path(base_name, name);
 			// 内部構造にディレクトリエントリーを作成(二段目以降)
@@ -106,7 +110,7 @@ impl Zipper {
 			for e in it {
 				let entry = e?;
 				let fullpath = entry.path_as_string();
-				self.append_entry(archiver, &internal_path, &fullpath)?;
+				self.append_entry(archiver, &internal_path, &fullpath, &settings)?;
 			}
 		} else if unknown.is_file() {
 			// ディレクトリの名前を検査しています。
@@ -155,7 +159,7 @@ impl Zipper {
 	///
 	/// # Arguments
 	/// `path` パス
-	pub fn archive(&self, path: &str) -> Result<(), Box<dyn std::error::Error>> {
+	pub fn archive(&self, settings: &configuration::Settings, path: &str) -> Result<(), Box<dyn std::error::Error>> {
 		// パスを正規化
 		let path = functions::canonicalize_path(path)?;
 		// タイムスタンプ(%Y%m%d-%H%M%S)
@@ -173,7 +177,7 @@ impl Zipper {
 		let mut archiver = zip::ZipWriter::new(w);
 
 		// ここから走査
-		self.append_entry(&mut archiver, "", &path)?;
+		self.append_entry(&mut archiver, "", &path, &settings)?;
 
 		// アーカイバーを閉じます。
 		archiver.finish()?;
