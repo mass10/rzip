@@ -28,3 +28,17 @@ rzip path\to\directory
 
 * Enable to excluding filters on your own settings.toml.
 
+
+# settings.toml
+
+```toml
+exclude_dirs = [
+	".git",
+	".settings"
+]
+
+exclude_files = [
+	"*.vcxproj.user",
+	"*.obj"
+]
+```
