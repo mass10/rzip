@@ -94,7 +94,7 @@ impl Zipper {
 				return Ok(());
 			}
 			if !settings.is_valid_dir(name) {
-				println!("[TRACE] IGNORE {}", name);
+				println!("[INFO] IGNORE {}", name);
 				return Ok(());
 			}
 
@@ -122,7 +122,7 @@ impl Zipper {
 				return Ok(());
 			}
 			if !settings.is_valid_filename(name)? {
-				println!("[TRACE] IGNORE {}", name);
+				println!("[INFO] IGNORE {}", name);
 				return Ok(());
 			}
 

@@ -56,7 +56,7 @@ impl Settings {
 	fn configure(&mut self, path: &str) -> Result<(), Box<dyn std::error::Error>> {
 		// ファイルが無ければスキップします。
 		if !std::path::Path::new(path).is_file() {
-			println!("[TRACE] Configuration file not found. (settings.toml)");
+			println!("[INFO] Configuration file not found. (settings.toml)");
 			return Ok(());
 		}
 
