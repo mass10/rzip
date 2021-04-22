@@ -1,9 +1,9 @@
 [![Build Workflow on GitHub Actions](https://github.com/mass10/rzip/actions/workflows/rust.yml/badge.svg)](https://github.com/mass10/rzip/actions/workflows/rust.yml)
 
-# rzip
+# About
  
 * Simple ZIP-per.
-* Enabled to excludes something like `node_modules`, `.git`.
+* Able to exclude something like `node_modules`, `.git`.
 
 # Getting Started (with Source)
 

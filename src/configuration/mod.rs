@@ -21,6 +21,8 @@ fn tail(wildcard: &str) -> String {
 fn make_name_filter(wildcard: &str) -> String {
 	let wildcard = head(wildcard);
 	let wildcard = tail(&wildcard);
+	let wildcard = wildcard.replace("[", "\\[");
+	let wildcard = wildcard.replace("]", "\\]");
 	let wildcard = wildcard.replace(".", "\\.");
 	let wildcard = wildcard.replace("*", ".+");
 	return wildcard;
