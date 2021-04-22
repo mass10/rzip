@@ -37,6 +37,41 @@ pub struct Settings {
 	pub exclude_files: Option<std::collections::HashSet<String>>,
 }
 
+fn find_settings_toml() -> String {
+	// カレントディレクトリを調べます。
+	{
+		if std::path::Path::new("settings.toml").is_file() {
+			return "settings.toml".to_string();
+		}
+	}
+
+	// ユーザーのホームディレクトリを調べます。(Windows)
+	{
+		let value = std::env::var("USERPROFILE");
+		if value.is_ok() {
+			let home = value.unwrap();
+			let home = std::path::Path::new(&home);
+			let settings_toml = home.join("settings.toml");
+			let settings_toml = settings_toml.to_str().unwrap().to_string();
+			return settings_toml;
+		}
+	}
+
+	// ユーザーのホームディレクトリを調べます。(Linux)
+	{
+		let value = std::env::var("HOME");
+		if value.is_ok() {
+			let home = value.unwrap();
+			let home = std::path::Path::new(&home);
+			let settings_toml = home.join("settings.toml");
+			let settings_toml = settings_toml.to_str().unwrap().to_string();
+			return settings_toml;
+		}
+	}
+
+	return "".to_string();
+}
+
 impl Settings {
 	/// 新しいインスタンスを返します。
 	///
@@ -47,7 +82,13 @@ impl Settings {
 			exclude_dirs: Some(std::collections::HashSet::new()),
 			exclude_files: Some(std::collections::HashSet::new()),
 		};
-		instance.configure("settings.toml")?;
+
+		// 環境に応じた設定ファイルを探します。
+		let path = find_settings_toml();
+
+		// コンフィギュレーション
+		instance.configure(&path)?;
+
 		return Ok(instance);
 	}
 
@@ -56,6 +97,11 @@ impl Settings {
 	/// # Arguments
 	/// * `path` 設定ファイルのパス
 	fn configure(&mut self, path: &str) -> Result<(), Box<dyn std::error::Error>> {
+		// パスが指定されていなければスキップします。
+		if path == "" {
+			return Ok(());
+		}
+
 		// ファイルが無ければスキップします。
 		if !std::path::Path::new(path).is_file() {
 			println!("[INFO] Configuration file not found. (settings.toml)");
