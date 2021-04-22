@@ -41,6 +41,8 @@ pub trait PathHelper {
 	/// # Returns
 	/// フルパス
 	fn canonical_path_as_string(&self) -> Result<String, Box<dyn std::error::Error>>;
+
+	fn join_as_string(&self, child: &str) -> Result<String, Box<dyn std::error::Error>>;
 }
 
 impl PathHelper for std::path::Path {
@@ -67,6 +69,12 @@ impl PathHelper for std::path::Path {
 	fn canonical_path_as_string(&self) -> Result<String, Box<dyn std::error::Error>> {
 		let cano = self.canonicalize()?;
 		let s = cano.to_str().unwrap().to_string();
+		return Ok(s);
+	}
+
+	fn join_as_string(&self, child: &str) -> Result<String, Box<dyn std::error::Error>> {
+		let result = self.join(child);
+		let s = result.to_str().unwrap().to_string();
 		return Ok(s);
 	}
 }

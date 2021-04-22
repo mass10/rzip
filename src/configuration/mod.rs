@@ -37,39 +37,38 @@ pub struct Settings {
 	pub exclude_files: Option<std::collections::HashSet<String>>,
 }
 
-fn find_settings_toml() -> String {
+fn get_env(name: &str) -> String {
+	let value = std::env::var(name);
+	if value.is_err() {
+		return "".to_string();
+	}
+	return value.unwrap();
+}
+
+fn find_settings_toml() -> Result<String, Box<dyn std::error::Error>> {
+	use crate::helpers::PathHelper;
+
+	let name = "settings.toml";
+
 	// カレントディレクトリを調べます。
-	{
-		if std::path::Path::new("settings.toml").is_file() {
-			return "settings.toml".to_string();
-		}
+	if std::path::Path::new(name).is_file() {
+		return Ok(name.to_string());
 	}
 
 	// ユーザーのホームディレクトリを調べます。(Windows)
-	{
-		let value = std::env::var("USERPROFILE");
-		if value.is_ok() {
-			let home = value.unwrap();
-			let home = std::path::Path::new(&home);
-			let settings_toml = home.join("settings.toml");
-			let settings_toml = settings_toml.to_str().unwrap().to_string();
-			return settings_toml;
-		}
+	let home = get_env("USERPROFILE");
+	if home != "" {
+		return std::path::Path::new(&home).join_as_string(name);
 	}
 
 	// ユーザーのホームディレクトリを調べます。(Linux)
-	{
-		let value = std::env::var("HOME");
-		if value.is_ok() {
-			let home = value.unwrap();
-			let home = std::path::Path::new(&home);
-			let settings_toml = home.join("settings.toml");
-			let settings_toml = settings_toml.to_str().unwrap().to_string();
-			return settings_toml;
-		}
+	let home = get_env("HOME");
+	if home != "" {
+		return std::path::Path::new(&home).join_as_string(name);
 	}
 
-	return "".to_string();
+	// みつからない
+	return Ok("".to_string());
 }
 
 impl Settings {
@@ -84,7 +83,7 @@ impl Settings {
 		};
 
 		// 環境に応じた設定ファイルを探します。
-		let path = find_settings_toml();
+		let path = find_settings_toml()?;
 
 		// コンフィギュレーション
 		instance.configure(&path)?;
