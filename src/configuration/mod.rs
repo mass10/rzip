@@ -48,23 +48,23 @@ fn get_env(name: &str) -> String {
 fn find_settings_toml() -> Result<String, Box<dyn std::error::Error>> {
 	use crate::helpers::PathHelper;
 
-	let name = "settings.toml";
+	const NAME: &str = "settings.toml";
 
 	// カレントディレクトリを調べます。
-	if std::path::Path::new(name).is_file() {
-		return Ok(name.to_string());
+	if std::path::Path::new(NAME).is_file() {
+		return Ok(NAME.to_string());
 	}
 
 	// ユーザーのホームディレクトリを調べます。(Windows)
 	let home = get_env("USERPROFILE");
 	if home != "" {
-		return std::path::Path::new(&home).join_as_string(name);
+		return std::path::Path::new(&home).join_as_string(NAME);
 	}
 
 	// ユーザーのホームディレクトリを調べます。(Linux)
 	let home = get_env("HOME");
 	if home != "" {
-		return std::path::Path::new(&home).join_as_string(name);
+		return std::path::Path::new(&home).join_as_string(NAME);
 	}
 
 	// みつからない
