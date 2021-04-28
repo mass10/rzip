@@ -79,6 +79,7 @@ impl PathHelper for std::path::Path {
 	}
 }
 
+/// [std::time::Duration] に対するヘルパーです。
 pub trait DurationFormatter {
 	/// 経過時間の文字列表現を返します。
 	///
