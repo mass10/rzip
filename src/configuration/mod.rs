@@ -2,6 +2,13 @@ extern crate serde_derive;
 
 use crate::functions;
 
+/// マッチング記述文字列の先頭文字を、適切なキャラクターに変換します。
+///
+/// # Arguments
+/// * `wildcard` マッチング記述文字列
+///
+/// # Returns
+/// 返還後の文字列
 fn head(wildcard: &str) -> String {
 	if wildcard.starts_with("*") {
 		return wildcard.to_string();
@@ -10,6 +17,13 @@ fn head(wildcard: &str) -> String {
 	};
 }
 
+/// マッチング記述文字列の終端文字を、適切なキャラクターに変換します。
+///
+/// # Arguments
+/// * `wildcard` マッチング記述文字列
+///
+/// # Returns
+/// 返還後の文字列
 fn tail(wildcard: &str) -> String {
 	if wildcard.ends_with("*") {
 		return wildcard.to_string();
