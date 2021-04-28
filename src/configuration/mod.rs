@@ -12,9 +12,8 @@ use crate::functions;
 fn head(wildcard: &str) -> String {
 	if wildcard.starts_with("*") {
 		return wildcard.to_string();
-	} else {
-		return format!("^{}", wildcard);
-	};
+	}
+	return format!("^{}", wildcard);
 }
 
 /// マッチング記述文字列の終端文字を、適切なキャラクターに変換します。
@@ -27,9 +26,8 @@ fn head(wildcard: &str) -> String {
 fn tail(wildcard: &str) -> String {
 	if wildcard.ends_with("*") {
 		return wildcard.to_string();
-	} else {
-		return format!("{}$", wildcard);
-	};
+	}
+	return format!("{}$", wildcard);
 }
 
 fn make_name_filter(wildcard: &str) -> String {
