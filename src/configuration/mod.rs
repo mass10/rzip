@@ -1,3 +1,7 @@
+//!
+//! Configuration
+//!
+
 extern crate serde_derive;
 
 use crate::functions;
