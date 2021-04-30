@@ -8,7 +8,7 @@ use crate::functions;
 /// * `wildcard` マッチング記述文字列
 ///
 /// # Returns
-/// 返還後の文字列
+/// 変換後の文字列
 fn head(wildcard: &str) -> String {
 	if wildcard.starts_with("*") {
 		return wildcard.to_string();
@@ -22,7 +22,7 @@ fn head(wildcard: &str) -> String {
 /// * `wildcard` マッチング記述文字列
 ///
 /// # Returns
-/// 返還後の文字列
+/// 変換後の文字列
 fn tail(wildcard: &str) -> String {
 	if wildcard.ends_with("*") {
 		return wildcard.to_string();
