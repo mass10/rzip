@@ -11,16 +11,12 @@ pub fn unlink(path: &str) -> Result<(), Box<dyn std::error::Error>> {
 		return Ok(());
 	}
 	let e = std::path::Path::new(path);
-	if !e.exists() {
-		return Ok(());
-	}
-
 	if e.is_dir() {
+		// ディレクトリを削除
 		std::fs::remove_dir_all(path)?;
-		return Ok(());
 	} else if e.is_file() {
+		// ファイルを削除
 		std::fs::remove_file(path)?;
-		return Ok(());
 	}
 	return Ok(());
 }
