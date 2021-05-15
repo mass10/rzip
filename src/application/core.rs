@@ -13,6 +13,7 @@ fn matches(pattern: &str, text: &str) -> bool {
 	let reg = regex::Regex::new(pattern);
 	if reg.is_err() {
 		panic!("[ERROR] 正規表現がエラー (理由: {})", reg.err().unwrap());
+		return false;
 	}
 	let result = reg.unwrap().find(text);
 	if result.is_none() {
