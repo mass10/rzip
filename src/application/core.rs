@@ -8,6 +8,7 @@ use crate::functions;
 use std::io::Read;
 
 /// 正規表現による文字列のマッチング
+#[allow(unused)]
 fn matches(pattern: &str, text: &str) -> bool {
 	let reg = regex::Regex::new(pattern);
 	if reg.is_err() {
@@ -17,46 +18,6 @@ fn matches(pattern: &str, text: &str) -> bool {
 	if result.is_none() {
 		return false;
 	}
-	return true;
-}
-
-/// ファイル名の検証
-pub fn is_valid_file(path: &std::path::Path) -> bool {
-	let name = path.file_name().unwrap().to_str().unwrap();
-	// で終わる
-	if matches("-20[0-9][0-9][0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9].zip$", name) {
-		return false;
-	}
-	// で終わる
-	if matches("-20[0-9][0-9][0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9][0-9][0-9].zip$", name) {
-		return false;
-	}
-	// で終わる
-	if matches(".VC.db$", name) {
-		return false;
-	}
-	// で終わる
-	if matches(".ipch$", name) {
-		return false;
-	}
-	return true;
-}
-
-/// ディレクトリの妥当性を検証します。
-pub fn is_valid_directory(name: &str) -> bool {
-	match name {
-		"node_modules" => return false,
-		".git" => return false,
-		"dist" => return false,
-		".nuxt" => return false,
-		"Debug" => return false,
-		"Release" => return false,
-		"ReleaseDebug" => return false,
-		"target" => return false,
-		"ipch" => return false,
-		"x64" => return false,
-		_ => {}
-	};
 	return true;
 }
 
@@ -89,10 +50,6 @@ impl Zipper {
 			// ディレクトリ名
 			let name = unknown.name_as_str();
 			// ディレクトリの名前を検査しています。
-			// TODO: 廃止予定
-			if !is_valid_directory(name) {
-				return Ok(());
-			}
 			if !settings.is_valid_dir(name) {
 				println!("[INFO] IGNORE {}", name);
 				return Ok(());
@@ -117,10 +74,6 @@ impl Zipper {
 			// ファイル名
 			let name = unknown.name_as_str();
 			// ディレクトリの名前を検査しています。
-			// TODO: 廃止予定
-			if !is_valid_file(unknown) {
-				return Ok(());
-			}
 			if !settings.is_valid_filename(name)? {
 				println!("[INFO] IGNORE {}", name);
 				return Ok(());
