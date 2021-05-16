@@ -1,9 +1,11 @@
 //!
-//! アプリケーション定義のエラー
+//! アプリケーション定義のエラーを提供しています。
 //!
 
-/// アプリケーション定義エラー
-#[derive(Debug, Clone)]
+///
+/// アプリケーション定義のエラーです。
+///
+#[derive(std::fmt::Debug, std::clone::Clone)]
 pub struct ApplicationError {
 	/// メッセージ文字列
 	description: String,
@@ -22,17 +24,15 @@ impl ApplicationError {
 	}
 }
 
-/// [std::fmt::Display] としての振る舞いを実装します。
 impl std::fmt::Display for ApplicationError {
-	/// 規定の操作をインプリメントします。
+	/// [std::fmt::Display] としての振る舞いを実装します。
 	fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
 		return write!(f, "{}", self.description);
 	}
 }
 
-/// [std::error::Error] としての振る舞いを実装します。
 impl std::error::Error for ApplicationError {
-	/// 規定の操作をインプリメントします。
+	/// [std::error::Error] としての振る舞いを実装します。
 	///
 	/// # Returns
 	/// エラー文字列
