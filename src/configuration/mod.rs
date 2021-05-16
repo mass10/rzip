@@ -44,15 +44,6 @@ fn make_name_filter(wildcard: &str) -> String {
 	return wildcard;
 }
 
-#[derive(serde_derive::Deserialize, Debug, std::clone::Clone)]
-pub struct Settings {
-	/// 除外するディレクトリ名
-	pub exclude_dirs: Option<std::collections::HashSet<String>>,
-
-	/// 除外するファイル名
-	pub exclude_files: Option<std::collections::HashSet<String>>,
-}
-
 fn get_env(name: &str) -> String {
 	let value = std::env::var(name);
 	if value.is_err() {
@@ -85,6 +76,18 @@ fn find_settings_toml() -> Result<String, Box<dyn std::error::Error>> {
 
 	// みつからない
 	return Ok("".to_string());
+}
+
+///
+/// 設定
+///
+#[derive(serde_derive::Deserialize, std::fmt::Debug, std::clone::Clone)]
+pub struct Settings {
+	/// 除外するディレクトリ名
+	pub exclude_dirs: Option<std::collections::HashSet<String>>,
+
+	/// 除外するファイル名
+	pub exclude_files: Option<std::collections::HashSet<String>>,
 }
 
 impl Settings {
