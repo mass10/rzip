@@ -16,6 +16,8 @@ impl Stopwatch {
 }
 
 impl std::fmt::Display for Stopwatch {
+	/// [std::fmt::Display] としての振る舞いを実装します。
+	///
 	/// 経過時間の文字列表現を返します。
 	fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
 		use crate::helpers::DurationFormatter;

@@ -3,6 +3,17 @@ name = "rzip"
 version = "0.9.0"
 authors = ["Irisawa Masaru <irisawa.masaru@gmail.com>"]
 edition = "2018"
+license = "MIT"
+description = "Simple archiver"
+repository = "https://github.com/mass10/rzip/"
+documentation = "https://docs.rs/crate/rzip/"
+categories = ["command-line-utilities"]
+include = [
+    "src/**/*.rs",
+    "Cargo.toml",
+    "LICENSE",
+    "README.md"
+]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
