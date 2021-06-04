@@ -28,3 +28,4 @@ exclude_files = [
 # Future Plans
 
 * Improve recognizing settings.toml.
+* Recognizing ~/.rziprc
