@@ -1,5 +1,5 @@
 //!
-//! アプリケーションのエントリーポイントです。
+//! Entrypoint of application.
 //!
 
 mod application;

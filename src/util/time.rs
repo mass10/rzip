@@ -1,24 +1,30 @@
 //!
-//! 日付や時刻に関する汎用操作の実装です。
+//! Operations for date and time.
 //!
 
-/// ストップウォッチです。
+///
+/// Stopwatch
+///
 pub struct Stopwatch {
-	/// インスタンスが生成された、もしくはオブジェクトがリセットされた日時を指します。
+	/// remains current timestamp.
 	time: std::time::Instant,
 }
 
 impl Stopwatch {
-	/// オブジェクトを生成します。
+	/// Returns a new instance of `Stopwatch`.
+	///
+	/// ### Returns
+	/// A new instance of `Stopwatch`.
 	pub fn new() -> Stopwatch {
 		return Stopwatch { time: std::time::Instant::now() };
 	}
 }
 
 impl std::fmt::Display for Stopwatch {
-	/// [std::fmt::Display] としての振る舞いを実装します。
+	/// Implements default behavior as [std::fmt::Display].
 	///
-	/// 経過時間の文字列表現を返します。
+	/// ### Returns
+	/// Duration as formatted string.
 	fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
 		use crate::helpers::DurationFormatter;
 
