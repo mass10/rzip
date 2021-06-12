@@ -56,25 +56,25 @@ impl Zipper {
 
 		let unknown = std::path::Path::new(path);
 		if unknown.is_dir() {
-			// Name of directory
+			// name of directory
 			let name = unknown.name_as_str();
-			// Validate its name
+			// validate its name
 			if !settings.is_valid_dir(name) {
 				println!("[INFO] IGNORE {}", name);
 				return Ok(());
 			}
 
-			// Relative path from the root.
+			// relative path from the root.
 			let internal_path = functions::build_path(base_name, name);
 
-			// Crate directory tree if needed.
+			// crate directory tree if needed.
 			if base_name != "" {
 				println!("[INFO] adding ... {}", &base_name);
 				let options = zip::write::FileOptions::default().compression_method(zip::CompressionMethod::Stored);
 				archiver.add_directory(&internal_path, options)?;
 			}
 
-			// Enumerate sub entries.
+			// enumerate sub entries.
 			let it = std::fs::read_dir(path)?;
 			for e in it {
 				let entry = e?;
@@ -82,9 +82,9 @@ impl Zipper {
 				self.append_entry(archiver, &internal_path, &fullpath, &settings)?;
 			}
 		} else if unknown.is_file() {
-			// ファイル名
+			// name of file
 			let name = unknown.name_as_str();
-			// ディレクトリの名前を検査しています。
+			// validate its name
 			if !settings.is_valid_filename(name)? {
 				println!("[INFO] IGNORE {}", name);
 				return Ok(());
