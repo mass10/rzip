@@ -1,5 +1,5 @@
 //!
-//! アプリケーションのメイン
+//! Application core implementation
 //!
 
 use super::errors::ApplicationError;
@@ -7,7 +7,13 @@ use crate::configuration;
 use crate::functions;
 use std::io::Read;
 
-/// 正規表現による文字列のマッチング
+/// regex string matching
+///
+/// # Arguments
+/// `pattern` regex pattern
+/// `text` sample
+/// # Returns
+/// Whether it matched or else.
 #[allow(unused)]
 fn matches(pattern: &str, text: &str) -> bool {
 	let reg = regex::Regex::new(pattern);
@@ -22,25 +28,27 @@ fn matches(pattern: &str, text: &str) -> bool {
 	return true;
 }
 
-/// アプリケーション本体の定義
+///
+/// Application core
+///
 pub struct Zipper;
 
 impl Zipper {
-	/// 新しいインスタンスを返します。
+	/// Returns a new instance of [Zipper].
 	///
 	/// # Returns
-	/// 新しいアプリケーションのインスタンス
+	/// A new instance of [Zipper].
 	pub fn new() -> Zipper {
 		let instance = Zipper {};
 		return instance;
 	}
 
-	/// アーカイバーにエントリーを追加します。
+	/// Create a new entry into archive.
 	///
 	/// # Arguments
-	/// * `archiver` [zip::ZipWriter] アーカイバー
-	/// * `base_name` ディレクトリ名
-	/// * `path` ファイルへのパス。内部名はファイルの名前になります。
+	/// * `archiver` [zip::ZipWriter].
+	/// * `base_name` Relative path of folder.
+	/// * `path` Path to a new entry.
 	fn append_entry(&self, archiver: &mut zip::ZipWriter<std::fs::File>, base_name: &str, path: &str, settings: &configuration::Settings) -> Result<(), Box<dyn std::error::Error>> {
 		use crate::helpers::DirEntityHelper;
 		use crate::helpers::PathHelper;
@@ -48,23 +56,25 @@ impl Zipper {
 
 		let unknown = std::path::Path::new(path);
 		if unknown.is_dir() {
-			// ディレクトリ名
+			// Name of directory
 			let name = unknown.name_as_str();
-			// ディレクトリの名前を検査しています。
+			// Validate its name
 			if !settings.is_valid_dir(name) {
 				println!("[INFO] IGNORE {}", name);
 				return Ok(());
 			}
 
-			// ZIP ルートからの相対パス
+			// Relative path from the root.
 			let internal_path = functions::build_path(base_name, name);
-			// 内部構造にディレクトリエントリーを作成(二段目以降)
+
+			// Crate directory tree if needed.
 			if base_name != "" {
 				println!("[INFO] adding ... {}", &base_name);
 				let options = zip::write::FileOptions::default().compression_method(zip::CompressionMethod::Stored);
 				archiver.add_directory(&internal_path, options)?;
 			}
-			// サブディレクトリを走査
+
+			// Enumerate sub entries.
 			let it = std::fs::read_dir(path)?;
 			for e in it {
 				let entry = e?;

@@ -8,9 +8,9 @@ mod functions;
 mod helpers;
 mod util;
 
-/// アプリケーションのエントリーポイント
+/// entrypoint.
 fn main() {
-	// コンフィギュレーション
+	// configure.
 	let result = configuration::Settings::new();
 	if result.is_err() {
 		println!("[ERROR] Configuration error. reason: {}", result.err().unwrap());
@@ -18,7 +18,7 @@ fn main() {
 	}
 	let settings = result.unwrap();
 
-	// コマンドライン引数(コマンド自身を除く)
+	// reading commandline options.
 	let args: std::vec::Vec<String> = std::env::args().skip(1).collect();
 	if args.len() == 0 {
 		println!("Path to directory needed.");
