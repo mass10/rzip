@@ -26,13 +26,13 @@ fn main() {
 		return;
 	}
 
-	// 処理時間計測用ストップウォッチ
+	// Stopwatch. For printing summary.
 	let stopwatch = util::time::Stopwatch::new();
 
-	// 第一引数
+	// Read the 1st argument.
 	let path_to_target = &args[0];
 
-	// 書庫化 & ZIP 圧縮
+	// Compression.
 	let zipper = application::core::Zipper::new();
 	let result = zipper.archive(&settings, &path_to_target);
 	if result.is_err() {
@@ -41,7 +41,7 @@ fn main() {
 		return;
 	}
 
-	// サマリー
+	// Summary.
 	println!("[INFO] Ok. ({})", stopwatch);
 
 	std::thread::sleep(std::time::Duration::from_millis(900));

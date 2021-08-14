@@ -18,7 +18,7 @@ use std::io::Read;
 fn matches(pattern: &str, text: &str) -> bool {
 	let reg = regex::Regex::new(pattern);
 	if reg.is_err() {
-		panic!("[ERROR] 正規表現がエラー (理由: {})", reg.err().unwrap());
+		panic!("[ERROR] Fatal error. (reason: {})", reg.err().unwrap());
 		return false;
 	}
 	let result = reg.unwrap().find(text);
@@ -124,31 +124,31 @@ impl Zipper {
 		return Ok(());
 	}
 
-	/// ディレクトリをアーカイブします。
+	/// Create a new archive.
 	///
 	/// # Arguments
-	/// `path` パス
+	/// `path` Path to a directory.
 	pub fn archive(&self, settings: &configuration::Settings, path: &str) -> Result<(), Box<dyn std::error::Error>> {
-		// パスを正規化
+		// Canonicalize path.
 		let path = functions::canonicalize_path(path)?;
-		// タイムスタンプ(%Y%m%d-%H%M%S)
+		// "20210128-235959"
 		let current_timestamp = functions::timestamp1();
-		// ファイル名を生成
+		// Create a path string of a new archive.
 		let archive_path_name = format!("{}-{}.zip", &path, &current_timestamp);
 
 		println!("[INFO] archiving ... {} >> {}", &path, &archive_path_name);
 
-		// .zip ファイルがあれば削除
+		// Remove existing .zip file.
 		functions::unlink(&archive_path_name)?;
 
-		// アーカイバーの初期化
+		// Create a new archive.
 		let w = std::fs::File::create(archive_path_name)?;
 		let mut archiver = zip::ZipWriter::new(w);
 
-		// ここから走査
+		// Add a new entry to the archive.
 		self.append_entry(&mut archiver, "", &path, &settings)?;
 
-		// アーカイバーを閉じます。
+		// Finish archiving
 		archiver.finish()?;
 
 		return Ok(());
