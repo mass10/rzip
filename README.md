@@ -1,5 +1,3 @@
-[![Build Workflow on GitHub Actions](https://github.com/mass10/rzip/actions/workflows/rust.yml/badge.svg)](https://github.com/mass10/rzip/actions/workflows/rust.yml)
-
 # About
  
 * Simple ZIP-per.
