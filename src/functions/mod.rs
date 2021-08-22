@@ -21,11 +21,6 @@ pub fn unlink(path: &str) -> Result<(), Box<dyn std::error::Error>> {
 	return Ok(());
 }
 
-/// Convert [std::time::SystemTime] to [chrono::DateTime]
-pub fn convert_datetime1(time: std::time::SystemTime) -> chrono::DateTime<chrono::Local> {
-	return chrono::DateTime::<chrono::Local>::from(time);
-}
-
 pub fn convert_datetime2(time: chrono::DateTime<chrono::Local>) -> zip::DateTime {
 	use chrono::{Datelike, Timelike};
 
@@ -40,7 +35,7 @@ pub fn convert_datetime2(time: chrono::DateTime<chrono::Local>) -> zip::DateTime
 }
 
 pub fn convert_datetime0(time: std::time::SystemTime) -> zip::DateTime {
-	let val1 = convert_datetime1(time);
+	let val1 = chrono::DateTime::<chrono::Local>::from(time);
 	let val2 = convert_datetime2(val1);
 	return val2;
 }
