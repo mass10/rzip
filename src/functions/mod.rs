@@ -1,26 +1,27 @@
 //!
-//! 様々な汎用操作
+//! Various functions.
 //!
 
-/// ディレクトリまたはファイルを削除します。
+/// Remove directory or file specified by `path`.
 ///
 /// # Arguments
-/// * `path` ファイル、またはディレクトリのパス
+/// * `path` Path to remove.
 pub fn unlink(path: &str) -> Result<(), Box<dyn std::error::Error>> {
 	if path == "" {
 		return Ok(());
 	}
 	let e = std::path::Path::new(path);
 	if e.is_dir() {
-		// ディレクトリを削除
+		// Remove directory.
 		std::fs::remove_dir_all(path)?;
 	} else if e.is_file() {
-		// ファイルを削除
+		// Remove file.
 		std::fs::remove_file(path)?;
 	}
 	return Ok(());
 }
 
+/// Convert [std::time::SystemTime] to [chrono::DateTime]
 pub fn convert_datetime1(time: std::time::SystemTime) -> chrono::DateTime<chrono::Local> {
 	return chrono::DateTime::<chrono::Local>::from(time);
 }

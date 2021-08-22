@@ -1,77 +1,81 @@
 //!
-//! 汎用的な各種トレイトの実装
+//! Utility traits
 //!
 
-/// [std::fs::DirEntry] のヘルパー
+/// [std::fs::DirEntry] helper methods
 pub trait DirEntityHelper {
-	/// パスを `String` で返します。
+	/// Get the path as [String]
 	///
 	/// # Returns
-	/// パス文字列
+	/// path as [String]
 	fn path_as_string(&self) -> String;
 }
 
 impl DirEntityHelper for std::fs::DirEntry {
-	/// パスを `String` で返します。
+	/// Get the path as [String]
 	///
 	/// # Returns
-	/// パス文字列
+	/// path as [String]
 	fn path_as_string(&self) -> String {
 		let tmp = self.path();
 		return tmp.to_str().unwrap().to_string();
 	}
 }
 
-/// [std::path::Path] のヘルパー
+/// [std::path::Path] helper methods
 pub trait PathHelper {
-	/// ファイル名を返します。
+	/// Get the name as &str
 	///
 	/// # Returns
-	/// ファイル名
+	/// name as &str
 	fn name_as_str(&self) -> &str;
 
-	/// ファイル名を返します。
+	/// Get the name as [String]
 	///
 	/// # Returns
-	/// ファイル名
+	/// name as [String]
 	fn name_as_string(&self) -> String;
 
-	/// フルパスを返します。
+	/// Get canonical path as [String]
 	///
 	/// # Returns
-	/// フルパス
+	/// canonical path as [String]
 	fn canonical_path_as_string(&self) -> Result<String, Box<dyn std::error::Error>>;
 
 	fn join_as_string(&self, child: &str) -> Result<String, Box<dyn std::error::Error>>;
 }
 
 impl PathHelper for std::path::Path {
-	/// ファイル名を返します。
+	/// Get the name as &str
 	///
 	/// # Returns
-	/// ファイル名
+	/// name as &str
 	fn name_as_str(&self) -> &str {
 		return self.file_name().unwrap().to_str().unwrap();
 	}
 
-	/// ファイル名を返します。
+	/// Get the name as [String]
 	///
 	/// # Returns
-	/// ファイル名
+	/// name as [String]
 	fn name_as_string(&self) -> String {
 		return self.file_name().unwrap().to_str().unwrap().to_string();
 	}
 
-	/// フルパスを返します。
+	/// Get canonical path as [String]
 	///
 	/// # Returns
-	/// フルパス
+	/// canonical path as [String]
 	fn canonical_path_as_string(&self) -> Result<String, Box<dyn std::error::Error>> {
 		let cano = self.canonicalize()?;
 		let s = cano.to_str().unwrap().to_string();
 		return Ok(s);
 	}
 
+	/// Join path as [String]
+	///
+	/// # Returns
+	/// joined path as [String]
 	fn join_as_string(&self, child: &str) -> Result<String, Box<dyn std::error::Error>> {
 		let result = self.join(child);
 		let s = result.to_str().unwrap().to_string();
@@ -79,20 +83,20 @@ impl PathHelper for std::path::Path {
 	}
 }
 
-/// [std::time::Duration] に対するヘルパーです。
+/// [std::time::Duration] helper methods
 pub trait DurationFormatter {
-	/// 経過時間の文字列表現を返します。
+	/// Format duration as [String]
 	///
 	/// # Returns
-	/// 文字列
+	/// formatted duration as [String]
 	fn to_string(&self) -> String;
 }
 
 impl DurationFormatter for std::time::Duration {
-	/// 経過時間の文字列表現を返します。
+	/// Format duration as [String]
 	///
 	/// # Returns
-	/// 文字列
+	/// formatted duration as [String]
 	fn to_string(&self) -> String {
 		let mut millis = self.as_millis();
 		let mut sec = 0;
