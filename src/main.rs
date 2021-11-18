@@ -37,7 +37,7 @@ fn main() {
 	let result = zipper.archive(&settings, &path_to_target);
 	if result.is_err() {
 		println!("[ERROR] Runtime error. reason: {:?}", result.err().unwrap());
-		std::thread::sleep(std::time::Duration::from_secs(2));
+		std::thread::sleep(std::time::Duration::from_secs(3));
 		return;
 	}
 
