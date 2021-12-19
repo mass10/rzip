@@ -49,6 +49,15 @@ pub trait PathHelper {
 	fn join_as_string(&self, child: &str) -> Result<String, Box<dyn std::error::Error>>;
 }
 
+fn fix_unc_path(path: &str) -> String {
+	if !path.starts_with("\\\\?\\") {
+		return path.to_string();
+	}
+	let mut tmp = path.to_string();
+	tmp = tmp.replace("\\\\?\\", "");
+	return tmp;
+}
+
 impl PathHelper for std::path::Path {
 	/// Get the name as &str
 	///
@@ -71,9 +80,9 @@ impl PathHelper for std::path::Path {
 	/// # Returns
 	/// canonical path as [String]
 	fn canonical_path_as_string(&self) -> Result<String, Box<dyn std::error::Error>> {
-		let cano = self.canonicalize()?;
-		let s = cano.to_str().unwrap().to_string();
-		return Ok(s);
+		let path = self.canonicalize()?;
+		let s = path.to_str().unwrap().to_string();
+		return Ok(fix_unc_path(&s));
 	}
 
 	/// Join path as [String]
