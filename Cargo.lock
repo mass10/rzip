@@ -178,7 +178,7 @@ checksum = "24d5f089152e60f62d28b835fbff2cd2e8dc0baf1ac13343bef92ab7eed84548"
 
 [[package]]
 name = "rzip"
-version = "0.9.2"
+version = "0.9.3"
 dependencies = [
  "chrono",
  "regex",
