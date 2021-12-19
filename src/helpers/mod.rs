@@ -2,7 +2,9 @@
 //! Utility traits
 //!
 
+///
 /// [std::fs::DirEntry] helper methods
+///
 pub trait DirEntityHelper {
 	/// Get the path as [String]
 	///
@@ -22,7 +24,9 @@ impl DirEntityHelper for std::fs::DirEntry {
 	}
 }
 
+///
 /// [std::path::Path] helper methods
+///
 pub trait PathHelper {
 	/// Get the name as &str
 	///
@@ -83,7 +87,9 @@ impl PathHelper for std::path::Path {
 	}
 }
 
+///
 /// [std::time::Duration] helper methods
+///
 pub trait DurationFormatter {
 	/// Format duration as [String]
 	///
@@ -118,5 +124,44 @@ impl DurationFormatter for std::time::Duration {
 
 		let s = format!("{:02}:{:02}:{:02}:{:03}", hour, min, sec, millis);
 		return s;
+	}
+}
+
+///
+/// [chrono::DateTime] helper methods
+///
+trait ChronoDateTimeHelper {
+	fn as_ziptime(&self) -> zip::DateTime;
+}
+
+impl ChronoDateTimeHelper for chrono::DateTime<chrono::Local> {
+	fn as_ziptime(&self) -> zip::DateTime {
+		use chrono::{Datelike, Timelike};
+
+		let time = *self;
+		let year = time.year() as u16;
+		let month = time.month() as u8;
+		let day = time.day() as u8;
+		let hour = time.hour() as u8;
+		let min = time.minute() as u8;
+		let sec = time.second() as u8;
+
+		return zip::DateTime::from_date_and_time(year, month, day, hour, min, sec).unwrap();
+	}
+}
+
+///
+/// [std::time::SystemTime] helper methods
+///
+pub trait SystemTimeHelper {
+	fn as_ziptime(&self) -> zip::DateTime;
+}
+
+impl SystemTimeHelper for std::time::SystemTime {
+	fn as_ziptime(&self) -> zip::DateTime {
+		let val1 = chrono::DateTime::<chrono::Local>::from(*self);
+		let val2 = val1.as_ziptime();
+		// let val2 = convert_datetime2(val1);
+		return val2;
 	}
 }
