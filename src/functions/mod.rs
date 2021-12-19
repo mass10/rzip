@@ -21,26 +21,7 @@ pub fn unlink(path: &str) -> Result<(), Box<dyn std::error::Error>> {
 	return Ok(());
 }
 
-pub fn convert_datetime2(time: chrono::DateTime<chrono::Local>) -> zip::DateTime {
-	use chrono::{Datelike, Timelike};
-
-	let year = time.year() as u16;
-	let month = time.month() as u8;
-	let day = time.day() as u8;
-	let hour = time.hour() as u8;
-	let min = time.minute() as u8;
-	let sec = time.second() as u8;
-
-	return zip::DateTime::from_date_and_time(year, month, day, hour, min, sec).unwrap();
-}
-
-pub fn convert_datetime0(time: std::time::SystemTime) -> zip::DateTime {
-	let val1 = chrono::DateTime::<chrono::Local>::from(time);
-	let val2 = convert_datetime2(val1);
-	return val2;
-}
-
-/// フルパスに変換
+/// Get canonical path of `path`.
 pub fn canonicalize_path(path: &str) -> Result<String, Box<dyn std::error::Error>> {
 	use crate::helpers::PathHelper;
 
@@ -48,14 +29,14 @@ pub fn canonicalize_path(path: &str) -> Result<String, Box<dyn std::error::Error
 	return path.canonical_path_as_string();
 }
 
-/// 内部パスを生成します。
+/// Build a path from `path` and `name`.
 ///
 /// # Arguments
-/// * `parent` エントリーを追加する場所までのパス
-/// * `name` 新しいエントリーの名前
+/// * `parent` Parent path.
+/// * `name` Name of the file or directory.
 ///
 /// # Returns
-/// パス文字列
+/// * Path to the file or directory.
 pub fn build_path(parent: &str, name: &str) -> String {
 	if parent == "" {
 		return name.to_string();
@@ -63,14 +44,20 @@ pub fn build_path(parent: &str, name: &str) -> String {
 	return format!("{}/{}", parent, name);
 }
 
-/// タイムスタンプ "%Y-%m-%d %H:%M:%S%.3f" を返します。
+/// Get current time as a string in the format `%Y-%m-%d %H:%M:%S%.3f`.
+///
+/// # Returns
+/// Current time as a [String]
 #[allow(unused)]
 pub fn timestamp0() -> String {
 	let date = chrono::Local::now();
 	return format!("{}", date.format("%Y-%m-%d %H:%M:%S%.3f"));
 }
 
-/// タイムスタンプ "%Y%m%d-%H%M%S" を返します。
+/// Get current time as a string in the format `%Y%m%d-%H%M%S`.
+///
+/// # Returns
+/// Current time as a [String]
 pub fn timestamp1() -> String {
 	let date = chrono::Local::now();
 	return format!("{}", date.format("%Y%m%d-%H%M%S"));
