@@ -82,6 +82,7 @@ impl Zipper {
 				self.append_entry(archiver, &internal_path, &fullpath, &settings)?;
 			}
 		} else if unknown.is_file() {
+			use crate::helpers::SystemTimeHelper;
 			// name of file
 			let name = unknown.name_as_str();
 			// validate its name
@@ -99,7 +100,7 @@ impl Zipper {
 			let options = options.compression_method(zip::CompressionMethod::Stored);
 			// 最終更新日時
 			let last_modified = meta.modified()?;
-			let last_modified = functions::convert_datetime0(last_modified);
+			let last_modified = last_modified.as_ziptime();
 			let options = options.last_modified_time(last_modified);
 
 			// 内部構造にファイルエントリーを作成
