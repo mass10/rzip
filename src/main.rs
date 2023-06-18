@@ -10,7 +10,11 @@ mod util;
 
 /// Show usage.
 fn show_usage() {
-	eprintln!("Usage: rzip \"new.zip\" \"path to archive\"");
+	eprintln!("Usage:");
+	eprintln!("    rzip \"new.zip\" \"path to archive\"");
+	eprintln!();
+	eprintln!("    * Recursively compresses all files and directories under the specified path.");
+	eprintln!("    * If the specified path is a directory, the directory name is used as the root of the archive.");
 }
 
 /// Entrypoint.
@@ -46,7 +50,7 @@ fn main() {
 	}
 
 	// Stopwatch. For printing summary.
-	let stopwatch = util::time::Stopwatch::new();
+	let stopwatch = util::Stopwatch::new();
 
 	// 1st argument is path to archive.
 	let path_to_archive = &args[0];
@@ -55,16 +59,14 @@ fn main() {
 	let path_to_source = &args[1];
 
 	// Compression.
-	let zipper = application::core::Zipper::new();
+	let zipper = application::Zipper::new();
 	let result = zipper.archive(&settings, &path_to_archive, &path_to_source);
 	if result.is_err() {
-		println!("[ERROR] Runtime error. reason: {:?}", result.err().unwrap());
+		eprintln!("[ERROR] Runtime error. reason: {:?}", result.err().unwrap());
 		std::thread::sleep(std::time::Duration::from_secs(3));
 		return;
 	}
 
 	// Summary.
 	println!("[INFO] Ok. ({})", stopwatch);
-
-	std::thread::sleep(std::time::Duration::from_millis(900));
 }

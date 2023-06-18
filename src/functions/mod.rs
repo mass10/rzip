@@ -37,7 +37,7 @@ pub fn canonicalize_path(path: &str) -> Result<String, Box<dyn std::error::Error
 ///
 /// # Returns
 /// * Path to the file or directory.
-pub fn build_path(parent: &str, name: &str) -> String {
+pub fn build_archive_internal_path(parent: &str, name: &str) -> String {
 	if parent == "" {
 		return name.to_string();
 	}
