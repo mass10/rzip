@@ -8,33 +8,55 @@ mod functions;
 mod helpers;
 mod util;
 
-/// entrypoint.
+/// Show usage.
+fn show_usage() {
+	eprintln!("Usage: rzip \"new.zip\" \"path to archive\"");
+}
+
+/// Entrypoint.
 fn main() {
 	// configure.
 	let result = configuration::Settings::new();
 	if result.is_err() {
-		println!("[ERROR] Configuration error. reason: {}", result.err().unwrap());
-		return;
+		eprintln!("[ERROR] Configuration error. reason: {}", result.err().unwrap());
+		std::process::exit(1);
 	}
 	let settings = result.unwrap();
 
 	// reading commandline options.
-	let args: std::vec::Vec<String> = std::env::args().skip(1).collect();
-	if args.len() == 0 {
-		println!("Path to directory needed.");
-		std::thread::sleep(std::time::Duration::from_secs(2));
-		return;
+	let args: Vec<String> = std::env::args().skip(1).collect();
+	if args.len() < 1 {
+		show_usage();
+		std::process::exit(1);
+	}
+
+	for arg in &args {
+		if arg == "-h" || arg == "--help" {
+			show_usage();
+			return;
+		}
+		// Recursively in default.
+		// else if arg == "-r" || arg == "--recursive" {
+		// }
+	}
+
+	if args.len() <= 2 {
+		show_usage();
+		std::process::exit(1);
 	}
 
 	// Stopwatch. For printing summary.
 	let stopwatch = util::time::Stopwatch::new();
 
-	// Read the 1st argument.
-	let path_to_target = &args[0];
+	// 1st argument is path to archive.
+	let path_to_archive = &args[0];
+
+	// 2nd argument is path to file or directory.
+	let path_to_source = &args[1];
 
 	// Compression.
 	let zipper = application::core::Zipper::new();
-	let result = zipper.archive(&settings, &path_to_target);
+	let result = zipper.archive(&settings, &path_to_archive, &path_to_source);
 	if result.is_err() {
 		println!("[ERROR] Runtime error. reason: {:?}", result.err().unwrap());
 		std::thread::sleep(std::time::Duration::from_secs(3));
