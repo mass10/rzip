@@ -40,7 +40,7 @@ fn main() {
 		// }
 	}
 
-	if args.len() <= 2 {
+	if args.len() < 2 {
 		show_usage();
 		std::process::exit(1);
 	}
