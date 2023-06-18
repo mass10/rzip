@@ -18,10 +18,9 @@ include = [
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-zip = "^0.5.12"
-time = "^0.1.44"
-chrono = "^0.4.19"
-regex = "^1.4.5"
-toml = "^0.5.8"
-serde = "^1.0"
-serde_derive = "^1.0"
+zip = "*"
+chrono = "*"
+regex = "*"
+toml = "*"
+serde = "*"
+serde_derive = "*"
