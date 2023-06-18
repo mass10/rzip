@@ -58,6 +58,7 @@ pub fn timestamp0() -> String {
 ///
 /// # Returns
 /// Current time as a [String]
+#[allow(unused)]
 pub fn timestamp1() -> String {
 	let date = chrono::Local::now();
 	return format!("{}", date.format("%Y%m%d-%H%M%S"));

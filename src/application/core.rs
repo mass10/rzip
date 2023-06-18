@@ -129,21 +129,17 @@ impl Zipper {
 	///
 	/// # Arguments
 	/// `path` Path to a directory.
-	pub fn archive(&self, settings: &configuration::Settings, path: &str) -> Result<(), Box<dyn std::error::Error>> {
+	pub fn archive(&self, settings: &configuration::Settings, path_to_archive: &str, path: &str) -> Result<(), Box<dyn std::error::Error>> {
 		// Canonicalize path.
 		let path = functions::canonicalize_path(path)?;
-		// "20210128-235959"
-		let current_timestamp = functions::timestamp1();
-		// Create a path string of a new archive.
-		let archive_path_name = format!("{}-{}.zip", &path, &current_timestamp);
 
-		println!("[INFO] archiving ... {} >> {}", &path, &archive_path_name);
+		println!("[INFO] archiving ... {} >> {}", path, path_to_archive);
 
 		// Remove existing .zip file.
-		functions::unlink(&archive_path_name)?;
+		functions::unlink(path_to_archive)?;
 
 		// Create a new archive.
-		let w = std::fs::File::create(archive_path_name)?;
+		let w = std::fs::File::create(path_to_archive)?;
 		let mut archiver = zip::ZipWriter::new(w);
 
 		// Add a new entry to the archive.
