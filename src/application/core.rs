@@ -65,12 +65,12 @@ impl Zipper {
 				return Ok(());
 			}
 
-			// relative path from the root.
+			// Relative path from the root. "path/to/name"
 			let internal_path = functions::build_path(base_name, name);
 
-			// crate directory tree if needed.
+			// Create directory node.
 			{
-				println!("[INFO] adding ... {}", &internal_path);
+				println!("  adding: {} (stored)", &internal_path);
 
 				// last modified time
 				let last_modified = unknown.metadata()?.modified()?.as_ziptime();
@@ -101,17 +101,16 @@ impl Zipper {
 			let meta = unknown.metadata()?;
 
 			let options = zip::write::FileOptions::default();
-
-			// internal path
+			// ZIP ルートからの相対パス
 			let internal_path = functions::build_path(base_name, name);
 			// compression method
-			let options = options.compression_method(zip::CompressionMethod::Stored);
+			let options = options.compression_method(zip::CompressionMethod::Deflated);
 			// last modified time
 			let last_modified = meta.modified()?.as_ziptime();
 			let options = options.last_modified_time(last_modified);
 
 			// 内部構造にファイルエントリーを作成
-			println!("[INFO] adding ... {}", &internal_path);
+			println!("  adding: {} (deflated)", &internal_path);
 			archiver.start_file(&internal_path, options)?;
 			let mut stream = std::fs::File::open(path)?;
 			loop {

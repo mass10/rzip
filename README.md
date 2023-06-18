@@ -1,12 +1,13 @@
 # About
  
 * Simple ZIP-per.
-* Able to exclude something like `node_modules`, `.git`.
+* Able to exclude something like `node_modules`, `.git` with settings.toml.
 # Getting Started
 
-```COMMAND
+```CMD
 cargo install rzip
-rzip path\to\directory
+
+rzip archive.zip path\to\directory
 ```
 
 # settings.toml
