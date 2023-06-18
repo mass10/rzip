@@ -5,6 +5,7 @@
 use super::errors::ApplicationError;
 use crate::configuration;
 use crate::functions;
+use crate::helpers::SystemTimeHelper;
 use std::io::Read;
 
 /// regex string matching
@@ -68,9 +69,16 @@ impl Zipper {
 			let internal_path = functions::build_path(base_name, name);
 
 			// crate directory tree if needed.
-			if base_name != "" {
-				println!("[INFO] adding ... {}", &base_name);
-				let options = zip::write::FileOptions::default().compression_method(zip::CompressionMethod::Stored);
+			{
+				println!("[INFO] adding ... {}", &internal_path);
+
+				// last modified time
+				let last_modified = unknown.metadata()?.modified()?.as_ziptime();
+
+				let options = zip::write::FileOptions::default();
+				let options = options.compression_method(zip::CompressionMethod::Stored);
+				let options = options.last_modified_time(last_modified);
+
 				archiver.add_directory(&internal_path, options)?;
 			}
 
@@ -82,7 +90,6 @@ impl Zipper {
 				self.append_entry(archiver, &internal_path, &fullpath, &settings)?;
 			}
 		} else if unknown.is_file() {
-			use crate::helpers::SystemTimeHelper;
 			// name of file
 			let name = unknown.name_as_str();
 			// validate its name
@@ -91,16 +98,16 @@ impl Zipper {
 				return Ok(());
 			}
 
-			let options = zip::write::FileOptions::default();
-			// ZIP ルートからの相対パス
-			let internal_path = functions::build_path(base_name, name);
-			// ファイルのメタ情報
 			let meta = unknown.metadata()?;
-			// 圧縮方法
+
+			let options = zip::write::FileOptions::default();
+
+			// internal path
+			let internal_path = functions::build_path(base_name, name);
+			// compression method
 			let options = options.compression_method(zip::CompressionMethod::Stored);
-			// 最終更新日時
-			let last_modified = meta.modified()?;
-			let last_modified = last_modified.as_ziptime();
+			// last modified time
+			let last_modified = meta.modified()?.as_ziptime();
 			let options = options.last_modified_time(last_modified);
 
 			// 内部構造にファイルエントリーを作成
