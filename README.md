@@ -24,6 +24,21 @@ exclude_files = [
 ]
 ```
 
+# Examples
+
+```CMD
+REM Extracts Source-20230624-184501.zip
+rzip.exe "{0}-{Y}{m}{d}-{H}{M}{S}.zip" C:\Path\To\Source
+```
+
+> Source-
+
+```sh
+# Extracts source-20230624-184501.zip
+rzip "%0-%Y%m%d-%H%M%S.zip" /path/to/source
+```
+
+
 # Future Plans
 
 * Improve recognizing settings.toml.

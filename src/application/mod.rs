@@ -27,6 +27,70 @@ fn matches(pattern: &str, text: &str) -> bool {
 	return true;
 }
 
+/// 0 padding
+fn zero_pad_2(n: u32) -> String {
+	return format!("{:0>2}", n);
+}
+
+/// Extract reserved keywords.
+fn extract_keywords(str: &str, name: &str) -> String {
+	use chrono::Datelike;
+	use chrono::Timelike;
+
+	let now = std::time::SystemTime::now();
+	let now = chrono::DateTime::<chrono::Local>::from(now);
+
+	let mut result = str.to_string();
+
+	// for Linux
+	if result.contains("%Y") {
+		result = result.replace("%Y", &now.year().to_string());
+	}
+	if result.contains("%m") {
+		result = result.replace("%m", &zero_pad_2(now.month()));
+	}
+	if result.contains("%d") {
+		result = result.replace("%d", &zero_pad_2(now.day()));
+	}
+	if result.contains("%H") {
+		result = result.replace("%H", &zero_pad_2(now.hour()));
+	}
+	if result.contains("%M") {
+		result = result.replace("%M", &zero_pad_2(now.minute()));
+	}
+	if result.contains("%S") {
+		result = result.replace("%S", &zero_pad_2(now.second()));
+	}
+	if result.contains("%0") {
+		result = result.replace("%0", name);
+	}
+
+	// for Windows
+	if result.contains("{Y}") {
+		result = result.replace("{Y}", &now.year().to_string());
+	}
+	if result.contains("{m}") {
+		result = result.replace("{m}", &zero_pad_2(now.month()));
+	}
+	if result.contains("{d}") {
+		result = result.replace("{d}", &zero_pad_2(now.day()));
+	}
+	if result.contains("{H}") {
+		result = result.replace("{H}", &zero_pad_2(now.hour()));
+	}
+	if result.contains("{M}") {
+		result = result.replace("{M}", &zero_pad_2(now.minute()));
+	}
+	if result.contains("{S}") {
+		result = result.replace("{S}", &zero_pad_2(now.second()));
+	}
+	if result.contains("{0}") {
+		result = result.replace("{0}", name);
+	}
+
+	return result;
+}
+
 ///
 /// Application core
 ///
@@ -131,15 +195,23 @@ impl Zipper {
 	/// Create a new archive.
 	///
 	/// # Arguments
-	/// `path` Path to a directory.
+	/// * `settings` [configuration::Settings].
+	/// * `path_to_archive` Path to a new archive.
+	/// * `path` Path to a directory.
 	pub fn archive(&self, settings: &configuration::Settings, path_to_archive: &str, path: &str) -> Result<(), Box<dyn std::error::Error>> {
 		// Canonicalize path.
 		let path = functions::canonicalize_path(path)?;
 
-		println!("[INFO] archiving ... {} >> {}", path, path_to_archive);
+		let name = std::path::Path::new(&path).file_name();
+		let name = name.unwrap().to_str().unwrap();
+
+		// Extract special keywords.
+		let path_to_archive = extract_keywords(path_to_archive, name);
+
+		println!("[INFO] archiving ... {} >> {}", &path, &path_to_archive);
 
 		// Remove existing .zip file.
-		functions::unlink(path_to_archive)?;
+		functions::unlink(&path_to_archive)?;
 
 		// Create a new archive.
 		let w = std::fs::File::create(path_to_archive)?;
