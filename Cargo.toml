@@ -1,6 +1,6 @@
 [package]
 name = "rzip"
-version = "0.9.9"
+version = "0.9.10"
 authors = ["Irisawa Masaru <irisawa.masaru@gmail.com>"]
 edition = "2018"
 license = "MIT"
@@ -18,9 +18,10 @@ include = [
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-zip = "^0.5"
+zip = "^0.6"
 chrono = "^0.4"
 regex = "^1.8"
 toml = "^0.5"
 serde = "^1.0"
 serde_derive = "^1.0"
+getopts = "*"
