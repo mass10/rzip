@@ -26,18 +26,21 @@ exclude_files = [
 
 # Examples
 
+### Create archive with timestamp.
+
+* Windows
+
 ```CMD
 REM Extracts Source-20230624-184501.zip
 rzip.exe "{0}-{Y}{m}{d}-{H}{M}{S}.zip" C:\Path\To\Source
 ```
 
-> Source-
+* Linux
 
 ```sh
 # Extracts source-20230624-184501.zip
 rzip "%0-%Y%m%d-%H%M%S.zip" /path/to/source
 ```
-
 
 # Future Plans
 
