@@ -112,7 +112,8 @@ impl Zipper {
 	/// * `archiver` [zip::ZipWriter].
 	/// * `base_name` Relative path of folder.
 	/// * `path` Path to a new entry.
-	fn append_entry(&self, archiver: &mut zip::ZipWriter<std::fs::File>, base_name: &str, path: &str, settings: &configuration::Settings) -> Result<(), Box<dyn std::error::Error>> {
+	/// * `create_root` Whether it creates root folder or not.
+	fn append_entry(&self, archiver: &mut zip::ZipWriter<std::fs::File>, base_name: &str, path: &str, settings: &configuration::Settings, create_root: bool) -> Result<(), Box<dyn std::error::Error>> {
 		use crate::helpers::DirEntityHelper;
 		use crate::helpers::PathHelper;
 		use std::io::Write;
@@ -128,10 +129,12 @@ impl Zipper {
 			}
 
 			// Relative path from the root. "path/to/name"
-			let internal_path = functions::build_archive_internal_path(base_name, name);
+			let internal_path = if create_root { functions::build_archive_internal_path(base_name, name) } else { String::new() };
 
 			// Create directory node.
-			{
+			if create_root {
+				let internal_path = format!("{}/", internal_path);
+
 				println!("  adding: {} (stored)", &internal_path);
 
 				// last modified time
@@ -149,7 +152,7 @@ impl Zipper {
 			for e in it {
 				let entry = e?;
 				let fullpath = entry.path_as_string();
-				self.append_entry(archiver, &internal_path, &fullpath, &settings)?;
+				self.append_entry(archiver, &internal_path, &fullpath, &settings, true)?;
 			}
 		} else if unknown.is_file() {
 			// name of file
@@ -198,7 +201,8 @@ impl Zipper {
 	/// * `settings` [configuration::Settings].
 	/// * `path_to_archive` Path to a new archive.
 	/// * `path` Path to a directory.
-	pub fn archive(&self, settings: &configuration::Settings, path_to_archive: &str, path: &str) -> Result<(), Box<dyn std::error::Error>> {
+	/// * `create_root` Create a root directory.
+	pub fn archive(&self, settings: &configuration::Settings, path_to_archive: &str, path: &str, create_root: bool) -> Result<(), Box<dyn std::error::Error>> {
 		// Canonicalize path.
 		let path = functions::canonicalize_path(path)?;
 
@@ -218,7 +222,7 @@ impl Zipper {
 		let mut archiver = zip::ZipWriter::new(w);
 
 		// Add a new entry to the archive.
-		self.append_entry(&mut archiver, "", &path, &settings)?;
+		self.append_entry(&mut archiver, "", &path, &settings, create_root)?;
 
 		// Finish archiving
 		archiver.finish()?;
