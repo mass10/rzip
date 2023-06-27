@@ -9,10 +9,13 @@ mod helpers;
 mod util;
 
 /// Show usage.
-fn show_usage_header() {
+fn usage(options: &getopts::Options) {
 	eprintln!("RZIP: Recursively compress files and directories.");
 	eprintln!("    * Recursively compresses all files and directories under the specified path.");
 	eprintln!("    * If the specified path is a directory, the directory name is used as the root of the archive.");
+	eprintln!();
+	eprint!("{}", options.short_usage("\n    rzip \"archived.zip\" \"path to archive\""));
+	eprint!("{}", options.usage(""));
 }
 
 /// Entrypoint.
@@ -30,66 +33,48 @@ fn main() {
 
 	// Parse commandline options.
 	let mut options = getopts::Options::new();
-	options.opt("h", "help", "Usage.", "FLAG", getopts::HasArg::No, getopts::Occur::Optional);
-	options.opt("", "root", "No root folder.", "FLAG", getopts::HasArg::No, getopts::Occur::Optional);
-	options.opt("", "wait", "Finish with sleep {n} seconds.", "NUMBER", getopts::HasArg::Yes, getopts::Occur::Optional);
+	options.opt("h", "help", "Usage.", "", getopts::HasArg::No, getopts::Occur::Optional);
+	options.opt("", "root", "No root folder.", "", getopts::HasArg::No, getopts::Occur::Optional);
+	options.opt("", "sleep", "Sleep {n} seconds after finish.", "NUMBER", getopts::HasArg::Yes, getopts::Occur::Optional);
 	let result = options.parse(args);
 	if result.is_err() {
 		eprintln!("{}", result.err().unwrap());
 		eprintln!();
-
-		// Usage.
-		show_usage_header();
-		eprintln!();
-		eprint!("{}", options.short_usage("\n    rzip \"archived.zip\" \"path to archive\""));
-		eprint!("{}", options.usage(""));
-
+		usage(&options);
 		std::process::exit(1);
 	}
 	let matches = result.unwrap();
 
 	if matches.opt_present("h") {
-		// Usage.
-		show_usage_header();
-		eprintln!();
-		eprint!("{}", options.short_usage("\n    rzip \"archived.zip\" \"path to archive\""));
-		eprint!("{}", options.usage(""));
-
+		usage(&options);
 		return;
 	}
 
-	// Wait after finish.
-	let wait_seconds: f32 = if matches.opt_present("wait") {
-		let value = matches.opt_str("wait").unwrap();
+	// Sleep after finish.
+	let sleep_seconds: f32 = if matches.opt_present("sleep") {
+		let value = matches.opt_str("sleep").unwrap();
 		let value = value.parse::<f32>();
 		if value.is_err() {
-			eprintln!("[ERROR] Invalid value for -W option.");
-
-			// Usage.
-			show_usage_header();
+			eprintln!("Invalid value for option: '--sleep'");
 			eprintln!();
-			eprint!("{}", options.short_usage("\n    rzip \"archived.zip\" \"path to archive\""));
-			eprint!("{}", options.usage(""));
-
+			usage(&options);
 			std::process::exit(1);
 		}
 		value.unwrap()
 	} else {
 		0.0
 	};
-	let milliseconds = wait_seconds * 1000.0;
+	let milliseconds = sleep_seconds * 1000.0;
 	let milliseconds = milliseconds as u64;
+
+	// Optional: No root directory.
+	let create_root = !matches.opt_present("root");
 
 	// Free options.
 	let free_args = matches.free;
 
 	if free_args.len() < 2 {
-		// Usage.
-		show_usage_header();
-		eprintln!();
-		eprint!("{}", options.short_usage("\n    rzip \"archived.zip\" \"path to archive\""));
-		eprint!("{}", options.usage(""));
-
+		usage(&options);
 		std::process::exit(1);
 	}
 
@@ -104,7 +89,7 @@ fn main() {
 
 	// Compression.
 	let zipper = application::Zipper::new();
-	let result = zipper.archive(&settings, &path_to_archive, &path_to_source);
+	let result = zipper.archive(&settings, &path_to_archive, &path_to_source, create_root);
 	if result.is_err() {
 		eprintln!("[ERROR] Runtime error. reason: {:?}", result.err().unwrap());
 		std::thread::sleep(std::time::Duration::from_millis(milliseconds));
