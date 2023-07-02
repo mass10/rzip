@@ -1,6 +1,6 @@
 [package]
 name = "rzip"
-version = "0.9.11"
+version = "0.9.12"
 authors = ["Irisawa Masaru <irisawa.masaru@gmail.com>"]
 edition = "2018"
 license = "MIT"
