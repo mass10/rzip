@@ -91,6 +91,15 @@ fn extract_keywords(str: &str, name: &str) -> String {
 	return result;
 }
 
+/// Read file to the end.
+#[allow(unused)]
+fn read_file_to_end(path: &str) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
+	let mut file = std::fs::File::open(path)?;
+	let mut buffer = Vec::new();
+	file.read_to_end(&mut buffer)?;
+	return Ok(buffer);
+}
+
 ///
 /// Application core
 ///
@@ -169,7 +178,7 @@ impl Zipper {
 			// Relative path from the root. "path/to/name"
 			let internal_path = functions::build_archive_internal_path(base_name, name);
 			// compression method
-			let options = options.compression_method(zip::CompressionMethod::Deflated);
+			let options = options.compression_method(zip::CompressionMethod::Zstd);
 			// last modified time
 			let last_modified = meta.modified()?.as_ziptime();
 			let options = options.last_modified_time(last_modified);
@@ -179,7 +188,7 @@ impl Zipper {
 			archiver.start_file(&internal_path, options)?;
 			let mut stream = std::fs::File::open(path)?;
 			loop {
-				let mut buffer = [0; 1000];
+				let mut buffer = [0; 4000];
 				let bytes_read = stream.read(&mut buffer)?;
 				if bytes_read == 0 {
 					break;
