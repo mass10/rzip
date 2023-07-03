@@ -178,7 +178,7 @@ impl Zipper {
 			// Relative path from the root. "path/to/name"
 			let internal_path = functions::build_archive_internal_path(base_name, name);
 			// compression method
-			let options = options.compression_method(zip::CompressionMethod::Zstd);
+			let options = options.compression_method(zip::CompressionMethod::Deflated);
 			// last modified time
 			let last_modified = meta.modified()?.as_ziptime();
 			let options = options.last_modified_time(last_modified);
