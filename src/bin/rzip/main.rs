@@ -4,7 +4,6 @@
 
 mod application;
 mod configuration;
-mod helpers;
 mod util;
 
 /// Show usage.
