@@ -4,7 +4,6 @@
 
 mod application;
 mod configuration;
-mod functions;
 mod helpers;
 mod util;
 
