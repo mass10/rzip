@@ -1,6 +1,6 @@
 [package]
 name = "rzip"
-version = "0.9.14"
+version = "0.9.15"
 authors = ["Irisawa Masaru <irisawa.masaru@gmail.com>"]
 edition = "2018"
 license = "MIT"
@@ -14,6 +14,11 @@ include = [
     "LICENSE",
     "README.md"
 ]
+
+[[bin]]
+name = "rzip"
+test = false
+doc = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
