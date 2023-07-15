@@ -4,7 +4,8 @@
 
 use std::io::Read;
 
-use crate::{configuration, functions, helpers::SystemTimeHelper};
+use crate::configuration;
+use crate::util;
 
 /// regex string matching
 ///
@@ -123,8 +124,9 @@ impl Zipper {
 	/// * `path` Path to a new entry.
 	/// * `create_root` Whether it creates root folder or not.
 	fn append_entry(&self, archiver: &mut zip::ZipWriter<std::fs::File>, base_name: &str, path: &str, settings: &configuration::Settings, create_root: bool) -> Result<(), Box<dyn std::error::Error>> {
-		use crate::helpers::DirEntityHelper;
-		use crate::helpers::PathHelper;
+		use crate::util::DirEntityHelper;
+		use crate::util::PathHelper;
+		use crate::util::SystemTimeHelper;
 		use std::io::Write;
 
 		let unknown = std::path::Path::new(path);
@@ -138,7 +140,7 @@ impl Zipper {
 			}
 
 			// Relative path from the root. "path/to/name"
-			let internal_path = if create_root { functions::build_archive_internal_path(base_name, name) } else { String::new() };
+			let internal_path = if create_root { util::build_archive_internal_path(base_name, name) } else { String::new() };
 
 			// Create directory node.
 			if create_root {
@@ -176,7 +178,7 @@ impl Zipper {
 
 			let options = zip::write::FileOptions::default();
 			// Relative path from the root. "path/to/name"
-			let internal_path = functions::build_archive_internal_path(base_name, name);
+			let internal_path = util::build_archive_internal_path(base_name, name);
 			// compression method
 			let options = options.compression_method(zip::CompressionMethod::Deflated);
 			// last modified time
@@ -213,7 +215,7 @@ impl Zipper {
 	/// * `create_root` Create a root directory.
 	pub fn archive(&self, settings: &configuration::Settings, path_to_archive: &str, path: &str, create_root: bool) -> Result<(), Box<dyn std::error::Error>> {
 		// Canonicalize path.
-		let path = functions::canonicalize_path(path)?;
+		let path = util::canonicalize_path(path)?;
 
 		let name = std::path::Path::new(&path).file_name();
 		let name = name.unwrap().to_str().unwrap();
@@ -224,7 +226,7 @@ impl Zipper {
 		println!("[INFO] archiving ... {} >> {}", &path, &path_to_archive);
 
 		// Remove existing .zip file.
-		functions::unlink(&path_to_archive)?;
+		util::unlink(&path_to_archive)?;
 
 		// Create a new archive.
 		let w = std::fs::File::create(path_to_archive)?;

@@ -4,15 +4,9 @@
 
 extern crate serde_derive;
 
-use crate::functions;
+use crate::util;
 
-/// マッチング記述文字列の先頭文字を、適切なキャラクターに変換します。
-///
-/// # Arguments
-/// * `wildcard` マッチング記述文字列
-///
-/// # Returns
-/// 変換後の文字列
+/// Fix "some" to "^some". "*some" is not changed.
 fn head(wildcard: &str) -> String {
 	if wildcard.starts_with("*") {
 		return wildcard.to_string();
@@ -20,13 +14,7 @@ fn head(wildcard: &str) -> String {
 	return format!("^{}", wildcard);
 }
 
-/// マッチング記述文字列の終端文字を、適切なキャラクターに変換します。
-///
-/// # Arguments
-/// * `wildcard` マッチング記述文字列
-///
-/// # Returns
-/// 変換後の文字列
+/// Fix "some" to "some$". "some*" is not changed.
 fn tail(wildcard: &str) -> String {
 	if wildcard.ends_with("*") {
 		return wildcard.to_string();
@@ -34,6 +22,7 @@ fn tail(wildcard: &str) -> String {
 	return format!("{}$", wildcard);
 }
 
+/// Make name filter from wildcard.
 fn make_name_filter(wildcard: &str) -> String {
 	let wildcard = head(wildcard);
 	let wildcard = tail(&wildcard);
@@ -52,82 +41,93 @@ fn get_env(name: &str) -> String {
 	return value.unwrap();
 }
 
-fn find_settings_toml() -> Result<String, Box<dyn std::error::Error>> {
-	use crate::helpers::PathHelper;
+/// Detect the user's home directory.
+fn detect_users_home_dir() -> String {
+	// (Windows) Detect the user's home directory.
+	let home = get_env("USERPROFILE");
+	if home != "" {
+		return home;
+	}
 
+	// (Linux) Detect the user's home directory.
+	let home = get_env("HOME");
+	if home != "" {
+		return home;
+	}
+
+	return "".to_string();
+}
+
+/// Detect "settings.toml" in the current directory or the user's home directory.
+fn find_settings_toml() -> Result<String, Box<dyn std::error::Error>> {
 	const NAME: &str = "settings.toml";
 
-	// カレントディレクトリを調べます。
+	// Detect "settings.toml" in the current directory.
 	if std::path::Path::new(NAME).is_file() {
 		return Ok(NAME.to_string());
 	}
 
-	// ユーザーのホームディレクトリを調べます。(Windows)
-	let home = get_env("USERPROFILE");
-	if home != "" {
-		return std::path::Path::new(&home).join_as_string(NAME);
+	// Detect the user's home directory.
+	let home = detect_users_home_dir();
+	if home == "" {
+		return Ok("".to_string());
 	}
 
-	// ユーザーのホームディレクトリを調べます。(Linux)
-	let home = get_env("HOME");
-	if home != "" {
-		return std::path::Path::new(&home).join_as_string(NAME);
+	let path = util::concat_path(&home, NAME);
+	if !std::path::Path::new(&path).is_file() {
+		return Ok("".to_string());
 	}
 
-	// みつからない
-	return Ok("".to_string());
+	return Ok(path);
 }
 
 ///
-/// 設定
+/// Structure for Settings
 ///
 #[derive(serde_derive::Deserialize, std::fmt::Debug, std::clone::Clone)]
 pub struct Settings {
-	/// 除外するディレクトリ名
+	/// Dirs to exclude.
 	pub exclude_dirs: Option<std::collections::HashSet<String>>,
 
-	/// 除外するファイル名
+	/// Files to exclude.
 	pub exclude_files: Option<std::collections::HashSet<String>>,
 }
 
 impl Settings {
-	/// 新しいインスタンスを返します。
-	///
-	/// # Returns
-	/// `Settings` の新しいインスタンス
+	/// Create a new instance.
 	pub fn new() -> Result<Settings, Box<dyn std::error::Error>> {
 		let mut instance = Settings {
 			exclude_dirs: Some(std::collections::HashSet::new()),
 			exclude_files: Some(std::collections::HashSet::new()),
 		};
 
-		// 環境に応じた設定ファイルを探します。
+		// Detect "settings.toml" in the current directory or the user's home directory.
 		let path = find_settings_toml()?;
 
-		// コンフィギュレーション
+		// Configure
 		instance.configure(&path)?;
 
 		return Ok(instance);
 	}
 
-	/// コンフィギュレーションを行い、このインスタンスをを初期化します。
+	/// Configure
 	///
 	/// # Arguments
-	/// * `path` 設定ファイルのパス
+	/// * `path` Path to "settings.toml"
 	fn configure(&mut self, path: &str) -> Result<(), Box<dyn std::error::Error>> {
-		// パスが指定されていなければスキップします。
+		// Skip if path is empty.
 		if path == "" {
 			return Ok(());
 		}
 
-		// ファイルが無ければスキップします。
+		// Skip if the file does not exist.
 		if !std::path::Path::new(path).is_file() {
 			println!("[INFO] Configuration file not found. (settings.toml)");
 			return Ok(());
 		}
 
 		// テキストファイル全体を読み込み
-		let content = functions::read_text_file_all(&path)?;
+		let content = util::read_text_file_all(&path)?;
 
 		// toml ファイルをパース
 		*self = toml::from_str(&content)?;
