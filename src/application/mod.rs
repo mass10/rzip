@@ -194,7 +194,7 @@ impl Zipper {
 					break;
 				}
 				let write_buffer = &buffer[..bytes_read];
-				archiver.write(&write_buffer)?;
+				archiver.write_all(&write_buffer)?;
 			}
 		} else {
 			let message = format!("Unknown filesystem [{}].", path);
