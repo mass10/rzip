@@ -184,6 +184,11 @@ impl Zipper {
 			// last modified time
 			let last_modified = meta.modified()?.as_ziptime();
 			let options = options.last_modified_time(last_modified);
+			// permissions
+			let options = match get_unix_permissions_as_u8(&meta) {
+				None => options,
+				Some(n) => options.unix_permissions(n),
+			};
 
 			// 内部構造にファイルエントリーを作成
 			println!("  adding: {} (deflated)", &internal_path);
@@ -240,4 +245,19 @@ impl Zipper {
 
 		return Ok(());
 	}
+}
+
+/// Retrieve unix permissions as u8
+#[allow(unused)]
+fn get_unix_permissions_as_u8(meta: &std::fs::Metadata) -> Option<u32> {
+	#[cfg(unix)]
+	{
+		use std::os::unix::fs::PermissionsExt;
+		let perm = meta.permissions();
+		let mode = perm.mode();
+		let mode = mode & 0o777;
+		return Some(mode);
+	}
+
+	return None;
 }
