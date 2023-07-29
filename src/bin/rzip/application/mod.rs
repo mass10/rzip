@@ -255,7 +255,6 @@ fn get_unix_permissions_as_u8(meta: &std::fs::Metadata) -> Option<u32> {
 		use std::os::unix::fs::PermissionsExt;
 		let perm = meta.permissions();
 		let mode = perm.mode();
-		let mode = mode & 0o777;
 		return Some(mode);
 	}
 
