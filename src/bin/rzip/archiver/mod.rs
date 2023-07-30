@@ -42,7 +42,11 @@ impl ZipArchiver {
 			}
 
 			// Relative path from the root. "path/to/name"
-			let internal_path = if create_root { util::build_archive_internal_path(base_name, name) } else { String::new() };
+			let internal_path = if create_root {
+				util::build_archive_internal_path(base_name, name)
+			} else {
+				String::new()
+			};
 
 			// Create directory node.
 			if create_root {

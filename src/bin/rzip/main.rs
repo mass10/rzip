@@ -34,7 +34,14 @@ fn main() {
 	let mut options = getopts::Options::new();
 	options.opt("h", "help", "Usage.", "", getopts::HasArg::No, getopts::Occur::Optional);
 	options.opt("", "root", "No root folder.", "", getopts::HasArg::No, getopts::Occur::Optional);
-	options.opt("", "sleep", "Sleep {n} seconds after finish.", "NUMBER", getopts::HasArg::Yes, getopts::Occur::Optional);
+	options.opt(
+		"",
+		"sleep",
+		"Sleep {n} seconds after finish.",
+		"NUMBER",
+		getopts::HasArg::Yes,
+		getopts::Occur::Optional,
+	);
 	let result = options.parse(args);
 	if result.is_err() {
 		eprintln!("{}", result.err().unwrap());
