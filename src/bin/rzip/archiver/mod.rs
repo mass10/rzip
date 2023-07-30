@@ -131,6 +131,7 @@ fn create_file_attributes(meta: &std::fs::Metadata) -> Result<zip::write::FileOp
 
 	let options = zip::write::FileOptions::default();
 
+	// compression method
 	let options = options.compression_method(zip::CompressionMethod::Stored);
 
 	// last modified time
