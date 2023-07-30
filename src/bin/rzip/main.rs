@@ -3,6 +3,7 @@
 //!
 
 mod application;
+mod archiver;
 mod configuration;
 mod util;
 
