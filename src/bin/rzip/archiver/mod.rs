@@ -48,7 +48,6 @@ impl ZipArchiver {
 				String::new()
 			};
 
-			// Create directory node.
 			if create_root {
 				let meta = unknown.metadata()?;
 
@@ -60,6 +59,7 @@ impl ZipArchiver {
 
 				println!("  adding: {} (stored)", &internal_path);
 
+				// Create directory node.
 				self.archiver.add_directory(&internal_path, options)?;
 			}
 
@@ -89,6 +89,7 @@ impl ZipArchiver {
 
 			println!("  adding: {} (deflated)", &internal_path);
 
+			// Create file node.
 			self.archiver.start_file(&internal_path, options)?;
 			let mut stream = std::fs::File::open(path)?;
 			loop {
