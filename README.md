@@ -31,14 +31,14 @@ exclude_files = [
 * Windows
 
 ```CMD
-REM Extracts Source-20230624-184501.zip
+REM Generates Source-20230624-184501.zip
 rzip.exe "{0}-{Y}{m}{d}-{H}{M}{S}.zip" C:\Path\To\Source
 ```
 
 * Linux
 
 ```sh
-# Extracts source-20230624-184501.zip
+# Generates source-20230624-184501.zip
 rzip "%0-%Y%m%d-%H%M%S.zip" /path/to/source
 ```
 
