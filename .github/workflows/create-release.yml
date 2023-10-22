@@ -33,16 +33,16 @@ jobs:
                 name: my-tmp-f3290d00-91d4-44ad-b464-7bd90ff9bc7d
             # Make release.
           - name: release を作成して実行ファイルを公開
-            run: ./r-gh-create-release
+            run: ./r-gh-create-release `
                     --determine-version-from Cargo.toml --file rzip.exe --file rzip
             env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             # Delete artifacts.
           - name: Delete artifacts
-            run: curl
-                -X DELETE
-                -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}"
-                "https://api.github.com/repos/${{ github.repository }}/actions/artifacts"
+            run: curl `
+                -X DELETE `
+                -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" `
+                "https://api.github.com/repos/${{ github.repository }}/actions/artifacts" `
                 -d "{\"name\":\"artifacts\"}"
 
     # For Windows
