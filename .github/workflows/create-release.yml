@@ -29,10 +29,12 @@ jobs:
 
             # Download utility crate.
           - name: download utility crate
-            run: wget "https://github.com/mass10/r-gh-create-release/releases/latest/download/r-gh-create-release"
+            run: |
+                wget "https://github.com/mass10/r-gh-create-release/releases/latest/download/r-gh-create-release"
+                chmod +x r-gh-create-release
 
             # Create a release and publish attachments.
           - name: Create a release and publish attachments.
-            run: ./r-gh-create-release --file target/release/rzip.exe
+            run: . r-gh-create-release --file target/release/rzip.exe
             env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
