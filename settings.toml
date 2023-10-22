@@ -1,6 +1,6 @@
 exclude_dirs = [
     ".git",
-    "node_modules"
+    "node_modules",
 ]
 
 exclude_files = [
