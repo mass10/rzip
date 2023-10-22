@@ -35,6 +35,6 @@ jobs:
 
             # Create a release and publish attachments.
           - name: Create a release and publish attachments.
-            run: . r-gh-create-release --file target/release/rzip.exe
+            run: ./r-gh-create-release --file target/release/rzip.exe
             env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
