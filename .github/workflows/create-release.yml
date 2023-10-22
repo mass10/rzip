@@ -38,10 +38,10 @@ jobs:
             env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             # Delete artifacts.
-            run: |
-                curl `
-                    -X DELETE -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" `
-                    "https://api.github.com/repos/${{ github.repository }}/actions/artifacts" `
+          - name: Delete artifacts
+            run: curl
+                    -X DELETE -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}"
+                    "https://api.github.com/repos/${{ github.repository }}/actions/artifacts"
                     -d "{""name"":""artifacts""}"
 
     # For Windows
