@@ -123,9 +123,7 @@ fn main() {
 	}
 
 	// Sleep after finish.
-	let sleep_seconds: f32 = options.sleep.unwrap_or(0.0);
-	let milliseconds = sleep_seconds * 1000.0;
-	let milliseconds = milliseconds as u64;
+	let milliseconds = (options.sleep.unwrap_or(0.0) * 1000.0) as u64;
 
 	// Optional: No root directory.
 	let create_root = !options.root;
