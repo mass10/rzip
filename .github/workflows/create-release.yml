@@ -1,40 +1,83 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
-name: MSBuild
+name: Create releases make published.
 
 on:
+    # Launch workflow when main branch is pushed.
     push:
-        branches: ["main"]
+        branches: [ "main" ]
 
-    # Can be triggerred on Web UI of GitHub.
+    # Launch workflow when manually triggered.
     workflow_dispatch:
 
-permissions:
-    contents: write
-
 jobs:
-    build:
-        runs-on: ubuntu-latest
-
+    create-releases:
+        runs-on: windows-latest
+        needs: [build-on-windows, build-on-linux]
+        permissions:
+            # "write" permission is required to create a release. (NO NEED to grant at repository settings.)
+            contents: write
         steps:
-          - uses: actions/checkout@v3
-
-            # Build project.
-          - name: Build project
-            working-directory: ${{env.GITHUB_WORKSPACE}}
-            run: cargo build --release
-
-            # Download utility crate.
-          - name: download utility crate
+            # Checkout repository.
+          - name: Checkout
+            uses: actions/checkout@v3
+            with:
+                fetch-depth: 1
+            # Download CLI utility.
+          - name: download CLI utility
             run: |
                 wget "https://github.com/mass10/r-gh-create-release/releases/latest/download/r-gh-create-release"
                 chmod +x r-gh-create-release
-
-            # Create a release and publish attachments.
-          - name: Create a release and publish attachments.
-            run: ./r-gh-create-release --determine-version-from Cargo.toml --file target/release/rzip
+            # Download artifacts.
+          - name: Download artifacts
+            uses: actions/download-artifact@v2
+            with:
+                name: my-tmp-f3290d00-91d4-44ad-b464-7bd90ff9bc7d
+            # Make release.
+          - name: release を作成して実行ファイルを公開
+            run: ./r-gh-create-release
+                    --determine-version-from Cargo.toml --file rzip.exe --file rzip
             env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            # Delete artifacts.
+            run: curl
+                    -X DELETE
+                    -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}"
+                    "https://api.github.com/repos/${{ github.repository }}/actions/artifacts"
+                    -d "{\"name\":\"artifacts\"}"
+
+    # For Windows
+    build-on-windows:
+        runs-on: windows-latest
+        steps:
+            # Checkout repository.
+          - name: Checkout
+            uses: actions/checkout@v3
+            with:
+                fetch-depth: 1
+            # Build application for Windows.
+          - name: Create the app package
+            run: cargo.exe build --release
+            # Create artifact.
+          - name: Create Release
+            uses: actions/upload-artifact@v3
+            with:
+                name: my-tmp-f3290d00-91d4-44ad-b464-7bd90ff9bc7d
+                path: target\release\rzip.exe
+
+    # For Linux
+    build-on-linux:
+        runs-on: ubuntu-20.04 # ubuntu-latest
+        steps:
+            # Checkout repository.
+          - name: Checkout
+            uses: actions/checkout@v3
+            with:
+                fetch-depth: 1
+            # Build application for Linux.
+          - name: Create the app package
+            run: cargo build --release
+            # Create artifact.
+          - name: Create Release
+            uses: actions/upload-artifact@v3
+            with:
+                name: my-tmp-f3290d00-91d4-44ad-b464-7bd90ff9bc7d
+                path: target/release/rzip
