@@ -10,7 +10,7 @@ on:
 
 jobs:
     create-releases:
-        runs-on: windows-latest
+        runs-on: ubuntu-latest
         needs: [build-on-windows, build-on-linux]
         permissions:
             # "write" permission is required to create a release. (NO NEED to grant at repository settings.)
@@ -39,8 +39,11 @@ jobs:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             # Delete artifacts.
           - name: Delete artifacts
-            run: |
-                curl -X DELETE -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/actions/artifacts" -d "{""name"":""artifacts""}"
+            run: curl
+                -X DELETE
+                -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}"
+                "https://api.github.com/repos/${{ github.repository }}/actions/artifacts"
+                -d "{\"name\":\"artifacts\"}"
 
     # For Windows
     build-on-windows:
