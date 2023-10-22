@@ -1,0 +1,40 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: MSBuild
+
+on:
+    push:
+        branches: ["main"]
+
+    # Can be triggerred on Web UI of GitHub.
+    workflow_dispatch:
+
+env:
+
+permissions:
+    contents: write
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+          - uses: actions/checkout@v3
+
+            # Build project.
+          - name: Build project
+            working-directory: ${{env.GITHUB_WORKSPACE}}
+            run: cargo build --release
+
+            # Download utility crate.
+          - name: download utility crate
+            run: wget "https://github.com/mass10/r-gh-create-release/releases/latest/download/r-gh-create-release"
+
+            # Create a release and publish attachments.
+          - name: Create a release and publish attachments.
+            run: ./r-gh-create-release --file target/release/rzip.exe
+            env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
