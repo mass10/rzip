@@ -42,7 +42,7 @@ jobs:
                     -X DELETE
                     -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}"
                     "https://api.github.com/repos/${{ github.repository }}/actions/artifacts"
-                    -d "{\"name\":\"artifacts\"}"
+                    -d "{""name"":""artifacts""}"
 
     # For Windows
     build-on-windows:
