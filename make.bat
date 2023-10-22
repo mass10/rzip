@@ -1,4 +1,4 @@
 @SETLOCAL
 
-@CALL cargo fmt
-@CALL cargo build
+@cargo fmt
+@cargo build
