@@ -12,8 +12,6 @@ on:
     # Can be triggerred on Web UI of GitHub.
     workflow_dispatch:
 
-env:
-
 permissions:
     contents: write
 
